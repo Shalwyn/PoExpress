@@ -9,6 +9,6 @@ Future Functions
 * Price Check - Rare Items
 * Unique Item buy Search
 
-![Sample price](/images/price.PNG)
-![Sample trade](/images/trade.PNG)
+![Sample price](/Images/price.PNG)
+![Sample trade](/Images/trade.PNG)
 
