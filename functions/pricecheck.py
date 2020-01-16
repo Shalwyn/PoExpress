@@ -35,6 +35,26 @@ def buildunique(itemparse):
     }
     name = parameters['query']['name']
 
+def buildcurrency(itemparse):
+    global parameters
+    global name
+    parameters = {
+        "query": {
+            "status": {
+                "option": "online"
+            },
+            "type": itemparse.splitlines()[1],
+            "stats": [{
+                "type": "and",
+                "filters": []
+            }]
+        },
+        "sort": {
+            "price": "asc"
+        }
+    }
+    name = parameters['query']['type']
+
 def buildmap(itemparse):
     global parameters
     global name
@@ -61,6 +81,56 @@ def buildmap(itemparse):
     }
     name = parameters['query']['type']['option']
 
+def buildgem(itemparse):
+    global parameters
+    global name
+    qual = 0
+    if "Quality:" in itemparse.splitlines()[6].split()[0]:
+        qual = itemparse.splitlines()[6].split()[1].replace('+', '')
+        qual = qual.replace('%', '')
+    elif "Quality:" in itemparse.splitlines()[7].split()[0]:
+        qual = itemparse.splitlines()[7].split()[1].replace('+', '')
+        qual = qual.replace('%', '')
+    elif "Quality:" in itemparse.splitlines()[8].split()[0]:
+        qual = itemparse.splitlines()[8].split()[1].replace('+', '')
+        qual = qual.replace('%', '')
+    elif "Quality:" in itemparse.splitlines()[9].split()[0]:
+        qual = itemparse.splitlines()[9].split()[1].replace('+', '')
+        qual = qual.replace('%', '')
+
+
+
+    parameters = {
+        "query": {
+            "status": {
+                "option": "online"
+            },
+            "type": itemparse.splitlines()[1],
+            "stats": [{
+                "type": "and",
+                "filters": []
+            }],
+            "filters": {
+                "misc_filters": {
+                    "filters": {
+                        "gem_level": {
+                            "min": itemparse.splitlines()[4].split()[1],
+                            "max": itemparse.splitlines()[4].split()[1],
+                        },
+                        "quality": {
+                            "min": qual,
+                            "max": qual,
+                        }
+
+                    }
+                }
+            }
+        },
+        "sort": {
+            "price": "asc"
+        }
+    }
+    name = "{} Lvl: {} Qual: {}".format(parameters['query']['type'], itemparse.splitlines()[4].split()[1], qual)
 
 def buildpricewindow():
     #name =

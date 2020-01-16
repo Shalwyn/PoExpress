@@ -43,6 +43,20 @@ while True:
             t9 = threading.Thread(target=buildpricewindow)
             t9.start()
 
+    elif "Rarity: Currency" in data or "Rarity: Divination Card" in data:
+        if data != prev:
+            prev = data
+            buildcurrency(data)
+            t9 = threading.Thread(target=buildpricewindow)
+            t9.start()
+
+    elif "Rarity: Gem" in data:
+        if data != prev:
+            prev = data
+            buildgem(data)
+            t9 = threading.Thread(target=buildpricewindow)
+            t9.start()
+
     time.sleep(0.5)
 
     if(os.path.getmtime(fileName) > originalTime):
