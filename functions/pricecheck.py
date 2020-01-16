@@ -14,8 +14,9 @@ def jprint(obj):
     text = json.dumps(obj, sort_keys=True, indent=4)
     print(text)
 
-def builditem(itemparse):
+def buildunique(itemparse):
     global parameters
+    global name
     parameters = {
         "query": {
             "status": {
@@ -32,10 +33,37 @@ def builditem(itemparse):
             "price": "asc"
         }
     }
+    name = parameters['query']['name']
+
+def buildmap(itemparse):
+    global parameters
+    global name
+    splitmap = itemparse.splitlines()
+    first = splitmap.index("--------")
+
+    splitmap = itemparse.splitlines()[4].split()
+    parameters = {
+        "query": {
+            "status": {
+                "option": "online"
+            },
+            "type": {
+                "option": itemparse.splitlines()[first-1]
+            },
+            "stats": [{
+                "type": "and",
+                "filters": []
+            }]
+        },
+        "sort": {
+            "price": "asc"
+        }
+    }
+    name = parameters['query']['type']['option']
 
 
 def buildpricewindow():
-    name = parameters['query']['name']
+    #name =
 
     response = requests.post("https://www.pathofexile.com/api/trade/search/Metamorph", json=parameters)
     #jprint(response.json())

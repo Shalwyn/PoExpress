@@ -12,8 +12,6 @@ import threading
 #threadmain2 = threading.Thread(target=startcheckclip())
 #threadmain2.start()
 
-
-
 prev = ""
 root = Tk()
 #root.wm_attributes("-topmost", 1)
@@ -32,12 +30,19 @@ while True:
 
 
     if "Rarity: Unique" in data:
-
         if data != prev:
             prev = data
-            builditem(data)
+            buildunique(data)
             t9 = threading.Thread(target=buildpricewindow)
             t9.start()
+
+    elif "Map Tier:" in data and "Rarity: Rare" in data:
+        if data != prev:
+            prev = data
+            buildmap(data)
+            t9 = threading.Thread(target=buildpricewindow)
+            t9.start()
+
     time.sleep(0.5)
 
     if(os.path.getmtime(fileName) > originalTime):
