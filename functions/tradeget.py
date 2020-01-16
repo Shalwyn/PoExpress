@@ -68,6 +68,34 @@ def sendinvite(nicktoinvite):
     keyboard.press(Key.enter)
     keyboard.release(Key.enter)
 
+def sendtrade(nicktotrade):
+    regex = ".*Path of Exile.*"
+    cW = cWindow()
+    cW.find_window_regex(regex)
+    cW.SetAsForegroundWindow()
+
+
+    keyboard = Controller()
+    keyboard.press(Key.enter)
+    keyboard.release(Key.enter)
+    keyboard.type("/tradewith {}".format(nicktotrade))
+    keyboard.press(Key.enter)
+    keyboard.release(Key.enter)
+
+def kickparty(nicktokick):
+    regex = ".*Path of Exile.*"
+    cW = cWindow()
+    cW.find_window_regex(regex)
+    cW.SetAsForegroundWindow()
+
+
+    keyboard = Controller()
+    keyboard.press(Key.enter)
+    keyboard.release(Key.enter)
+    keyboard.type("/kick {}".format(nicktokick))
+    keyboard.press(Key.enter)
+    keyboard.release(Key.enter)
+
 def tradewindow():
 
     sound = "Bell.wav"
@@ -104,7 +132,11 @@ def tradewindow():
     T.insert(tk.END, "{} \n".format(windowstash))
     T.insert(tk.END, "{} \n".format(now))
     btn1 = tk.Button(window, text = "Invite", command=lambda: sendinvite(buyer))
-    btn1.pack()
-
+    btn1.pack(side="left")
+    btn2 = tk.Button(window, text = "Trade", command=lambda: sendtrade(buyer))
+    btn2.pack(side="left")
+    btn3 = tk.Button(window, text = "Kick", command=lambda: kickparty(buyer))
+    btn3.pack(side="left")
+    window.call('wm', 'attributes', '.', '-topmost', '1')
 #    window.after(0, readclient())
     window.mainloop()

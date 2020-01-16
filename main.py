@@ -25,7 +25,12 @@ watch_keyboard()
 fileName = 'C:/Program Files (x86)/Steam/steamapps/common/Path of Exile/logs/Client.txt'
 originalTime = os.path.getmtime(fileName)
 while True:
-    data = root.clipboard_get()
+    try:
+        data = root.clipboard_get()
+    except (TclError, UnicodeDecodeError):  # ignore non-text clipboard contents
+        continue
+
+
     if "Rarity: Unique" in data:
 
         if data != prev:

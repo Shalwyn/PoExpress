@@ -72,5 +72,5 @@ def buildpricewindow():
         T.insert(tkinter.END, "price {} {} Corrupted\n".format(amount, currency))
       else:
         T.insert(tkinter.END, "price {} {}\n".format(amount, currency))
-
+    MessFrame.call('wm', 'attributes', '.', '-topmost', '1')
     MessFrame.mainloop()
