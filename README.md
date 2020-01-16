@@ -11,6 +11,6 @@ Future Functions
 
 !! Attention: This is early Access, Frames and Artwork will be edited later !!
 
-![Sample price](/Images/price.PNG)
-![Sample trade](/Images/trade.PNG)
+![Sample price](/Images/price.PNG) ![Sample trade](/Images/trade.PNG)
+
 
