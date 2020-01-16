@@ -36,7 +36,7 @@ while True:
             t9 = threading.Thread(target=buildpricewindow)
             t9.start()
 
-    elif "Map Tier:" in data and "Rarity: Rare" in data:
+    elif "Map Tier:" in data and "Rarity: Rare" in data or "Rarity: Normal" in data or "Rarity: Magic" in data:
         if data != prev:
             prev = data
             buildmap(data)

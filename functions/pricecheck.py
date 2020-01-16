@@ -60,26 +60,44 @@ def buildmap(itemparse):
     global name
     splitmap = itemparse.splitlines()
     first = splitmap.index("--------")
-
     splitmap = itemparse.splitlines()[4].split()
-    parameters = {
-        "query": {
-            "status": {
-                "option": "online"
+    if "Blighted" in itemparse:
+        parameters = {
+            "query": {
+                "status": {
+                    "option": "online"
+                },
+                "term": itemparse.splitlines()[first-1],
+                "stats": [{
+                    "type": "and",
+                    "filters": []
+                }]
             },
-            "type": {
-                "option": itemparse.splitlines()[first-1]
-            },
-            "stats": [{
-                "type": "and",
-                "filters": []
-            }]
-        },
-        "sort": {
-            "price": "asc"
+            "sort": {
+                "price": "asc"
+            }
         }
-    }
-    name = parameters['query']['type']['option']
+        name = parameters['query']['term']
+    else:
+        parameters = {
+            "query": {
+                "status": {
+                    "option": "online"
+                },
+                "type": {
+                    "option": itemparse.splitlines()[first-1]
+                },
+                "stats": [{
+                    "type": "and",
+                    "filters": []
+                }]
+            },
+            "sort": {
+                "price": "asc"
+            }
+        }
+        name = parameters['query']['type']['option']
+
 
 def buildgem(itemparse):
     global parameters

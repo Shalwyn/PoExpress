@@ -33,7 +33,6 @@ class cWindow:
 
         self._hwnd = None
         win32gui.EnumWindows(self._window_enum_callback, regex)
-        print("1")
 
     def hide_always_on_top_windows(self):
         win32gui.EnumWindows(self._window_enum_callback_hide, None)
@@ -95,9 +94,10 @@ def kickparty(nicktokick):
     keyboard.type("/kick {}".format(nicktokick))
     keyboard.press(Key.enter)
     keyboard.release(Key.enter)
+    window.destroy()
 
 def tradewindow():
-
+    global window
     sound = "Bell.wav"
     playsound(sound)
     ding = open('C:/Program Files (x86)/Steam/steamapps/common/Path of Exile/logs/Client.txt', 'r', encoding='UTF8')
