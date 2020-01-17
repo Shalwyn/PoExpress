@@ -4,6 +4,7 @@ from playsound import playsound
 from functions.tradeget import *
 from functions.pricecheck import *
 from functions.keyfunctions import *
+import functions.config as config
 import threading
 from look import *
 
@@ -17,6 +18,7 @@ ttray.start()
 #threadmain2.start()
 
 prev = ""
+prevst = ""
 root = Tk()
 #root.wm_attributes("-topmost", 1)
 root.update()
@@ -39,9 +41,6 @@ try:
 except IOError:
     print("")
 
-
-
-
 originalTime = os.path.getmtime(fileName)
 while True:
     try:
@@ -50,12 +49,22 @@ while True:
         continue
 
 
-    if "Rarity: Unique" in data:
+    if "Rarity: Unique" in data and config.statsearch == 0:
         if data != prev:
+
             prev = data
             buildunique(data)
             t9 = threading.Thread(target=buildpricewindow)
             t9.start()
+
+    if "Rarity: Unique" in data and config.statsearch == 1:
+        if data != prevst:
+            prevst = data
+            prev = data
+            builduniquestat(data)
+            t9 = threading.Thread(target=buildpricewindow)
+            t9.start()
+            config.statsearch = 0
 
     elif "Map Tier:" in data and "Rarity: Rare" in data or "Rarity: Normal" in data or "Rarity: Magic" in data:
         if data != prev:
@@ -72,6 +81,7 @@ while True:
             t9.start()
 
     elif "Rarity: Gem" in data:
+
         if data != prev:
             prev = data
             buildgem(data)
