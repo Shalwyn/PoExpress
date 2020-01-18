@@ -8,6 +8,7 @@ from playsound import playsound
 import win32gui
 import re
 from pynput.keyboard import Key, Controller
+import functions.config as config
 import threading
 from datetime import datetime
 
@@ -98,17 +99,17 @@ def kickparty(nicktokick):
 
 def tradewindow():
     global window
-    sound = "Bell.wav"
+    sound = config.soundfile
     playsound(sound)
     ding = open('C:/Program Files (x86)/Steam/steamapps/common/Path of Exile/logs/Client.txt', 'r', encoding='UTF8')
     last_line = ding.readlines()[-1]
     ding.close()
     splitmsg = last_line.split()
-    if 'wtb' in splitmsg :
+    if 'wtb' in splitmsg and "@from" in splitmsg:
         buyer = splitmsg[splitmsg.index("wtb")-1]
         del splitmsg[0:splitmsg.index("wtb")]
         buyer = buyer[:-1]
-    if 'Hi,' in splitmsg :
+    if 'Hi,' in splitmsg  and "@from" in splitmsg:
         buyer = splitmsg[splitmsg.index("Hi,")-1]
         del splitmsg[0:splitmsg.index("Hi,")]
         buyer = buyer[:-1]

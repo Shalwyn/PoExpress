@@ -8,11 +8,15 @@ from functions.tradeget import *
 from functions.pricecheck import *
 from functions.keyfunctions import *
 import functions.config as config
+import functions.menu as menu
 import threading
 from look import *
 
 ttray = threading.Thread(target=traycreate)
 ttray.start()
+
+menut = threading.Thread(target=menu.createmainmenu)
+menut.start()
 
 #threadmain1 = threading.Thread(target=startread())
 #threadmain1.start()
@@ -30,21 +34,8 @@ DEBUG = False
 i = 0
 watch_keyboard()
 
-try:
-    f = open("C:/Program Files (x86)/Grinding Gear Games/Path of Exile/logs/Client.txt")
-    fileName = 'C:/Program Files (x86)/Grinding Gear Games/Path of Exile/logs/Client.txt'
-except IOError:
-    print("")
 
-
-
-try:
-    f = open("C:/Program Files (x86)/Steam/steamapps/common/Path of Exile/logs/Client.txt")
-    fileName = 'C:/Program Files (x86)/Steam/steamapps/common/Path of Exile/logs/Client.txt'
-except IOError:
-    print("")
-
-originalTime = os.path.getmtime(fileName)
+originalTime = os.path.getmtime(config.clienttxt)
 while True:
     try:
         data = root.clipboard_get()
@@ -102,11 +93,11 @@ while True:
 
     time.sleep(0.5)
 
-    if(os.path.getmtime(fileName) > originalTime):
-        ding = open('C:/Program Files (x86)/Steam/steamapps/common/Path of Exile/logs/Client.txt', 'r', encoding='UTF8')
+    if(os.path.getmtime(config.clienttxt) > originalTime):
+        ding = open(config.clienttxt, 'r', encoding='UTF8')
         last_line = ding.readlines()[-1]
         ding.close()
         if league in last_line:
             t1 = threading.Thread(target=tradewindow)
             t1.start()
-        originalTime = os.path.getmtime(fileName)
+        originalTime = os.path.getmtime(config.clienttxt)

@@ -413,7 +413,7 @@ def buildpricewindow():
     result = result.replace('"', '')
     result = result.replace(' ', '')
 
-    #print("https://www.pathofexile.com/api/trade/fetch/{}?query={}".format(result, query))
+    print("https://www.pathofexile.com/api/trade/fetch/{}?query={}".format(result, query))
 
     response = requests.get("https://www.pathofexile.com/api/trade/fetch/{}?query={}".format(result, query))
     result = response.json()["result"]

@@ -4,11 +4,11 @@ This tool shal bring a lot of tools together.
 actualy functions:
 * Trade Whisper Window (Invite / Trade / Kick)
 * Price Check (Maps / Uniques / Gems (Level & Quality) Corrupted or not Corrupted Gems / Div Cards / Unique Items per Stats (Min Max roll search / Links) / Currency / Rare Items
+* Unique Item buy Search
+* Config Menu (Client.txt Path chooser / Trade Sound Choose)
 
 Future Functions
 * Price Check - Rare Items if no result then from poeprices
-* Unique Item buy Search
-* Config Menu (Client.txt Path chooser / Color Switcher)
 * Div Card Calculator
 * Awakener Counter
 * Some Trading Improvements
