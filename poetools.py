@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-#
+
 import os, time
 from tkinter import *
 from playsound import playsound
@@ -48,7 +51,7 @@ while True:
     except (TclError, UnicodeDecodeError):  # ignore non-text clipboard contents
         continue
 
-
+    splitdata = data.splitlines()
     if "Rarity: Unique" in data and config.statsearch == 0:
         if data != prev:
 
@@ -57,7 +60,7 @@ while True:
             t9 = threading.Thread(target=buildpricewindow)
             t9.start()
 
-    if "Rarity: Unique" in data and config.statsearch == 1:
+    elif "Rarity: Unique" in data and config.statsearch == 1:
         if data != prevst:
             prevst = data
             prev = data
@@ -85,6 +88,15 @@ while True:
         if data != prev:
             prev = data
             buildgem(data)
+            t9 = threading.Thread(target=buildpricewindow)
+            t9.start()
+
+
+
+    elif "Rarity: Rare" in data and splitdata[3] == "--------":
+        if data != prev:
+            prev = data
+            buildrareitem(data)
             t9 = threading.Thread(target=buildpricewindow)
             t9.start()
 

@@ -1,14 +1,19 @@
 # PoeTools
-This tool shal bring a lot of tools together. 
+This tool shal bring a lot of tools together.
 
 actualy functions:
 * Trade Whisper Window (Invite / Trade / Kick)
-* Price Check (Maps / Uniques)
+* Price Check (Maps / Uniques / Gems (Level & Quality) Corrupted or not Corrupted Gems / Div Cards / Unique Items per Stats (Min Max roll search / Links) / Currency / Rare Items
 
 Future Functions
-* Price Check - Rare Items
+* Price Check - Rare Items if no result then from poeprices
 * Unique Item buy Search
+* Config Menu (Client.txt Path chooser / Color Switcher)
+* Div Card Calculator
+* Awakener Counter
+* Some Trading Improvements
 
-![Sample price](/images/price.PNG)
-![Sample trade](/images/trade.PNG)
 
+!! Attention: This is early Access, Frames and Artwork will be edited later !!
+
+![Sample price](/Images/price.PNG) ![Sample trade](/Images/trade.PNG)
