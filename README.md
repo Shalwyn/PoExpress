@@ -13,6 +13,11 @@ Future Functions
 * Awakener Counter
 * Some Trading Improvements
 
+-----------
+Commands:
+Alt + S: Stat Search on an Uniques
+Strg + C / Alt + D: Pricecheck
+
 
 !! Attention: This is early Access, Frames and Artwork will be edited later !!
 
