@@ -8,21 +8,17 @@ from functions.tradeget import *
 from functions.pricecheck import *
 from functions.keyfunctions import *
 import functions.config as config
-import functions.menu as menu
+from functions.menu import *
 import threading
 from look import *
 
 ttray = threading.Thread(target=traycreate)
 ttray.start()
 
-menut = threading.Thread(target=menu.createmainmenu)
-menut.start()
+smtray = threading.Thread(target=createmainmenu)
+smtray.start()
 
-#threadmain1 = threading.Thread(target=startread())
-#threadmain1.start()
 
-#threadmain2 = threading.Thread(target=startcheckclip())
-#threadmain2.start()
 
 prev = ""
 prevst = ""
@@ -97,7 +93,10 @@ while True:
         ding = open(config.clienttxt, 'r', encoding='UTF8')
         last_line = ding.readlines()[-1]
         ding.close()
-        if league in last_line:
-            t1 = threading.Thread(target=tradewindow)
-            t1.start()
+        if league in last_line and "@From" in last_line:
+            t18 = threading.Thread(target=tradewindow)
+            t18.start()
+        if league in last_line and "@To" in last_line:
+            t18 = threading.Thread(target=outgoinwindow)
+            t18.start()
         originalTime = os.path.getmtime(config.clienttxt)

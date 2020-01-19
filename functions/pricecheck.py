@@ -9,7 +9,7 @@ import os, time
 import threading
 import functions.modlist as modlist
 import functions.config as config
-
+import webbrowser
 
 def jprint(obj):
     # create a formatted string of the Python JSON object
@@ -186,14 +186,16 @@ def buildrareitem(itemparse):
             endstep = x
             break
 
+    if links == 0:
+        links = None
 
     parameters = {
         "query": {
             "status": {
                 "option": "online"
             },
-            "term": itemparse.splitlines()[1],
             "type": itemparse.splitlines()[2],
+
             "filters": {
                 "socket_filters": {
                     "filters": {
@@ -211,7 +213,7 @@ def buildrareitem(itemparse):
     }
 
 
-    name = "StatCheck: {} - {} Linked".format(parameters['query']['term'], links)
+    name = "StatCheck: {} - {} Linked".format(parameters['query']['type'], links)
     parameters["query"]["stats"] = [{}]
     parameters["query"]["stats"][0]["type"] = "and"
     parameters["query"]["stats"][0]["filters"] = []
@@ -399,6 +401,9 @@ def buildgem(itemparse):
     }
     name = "{} Lvl: {} Qual: {} Corrupted {}".format(parameters['query']['type'], itemparse.splitlines()[4].split()[1], qual, checkifcurrepted(itemparse))
 
+def searchweb(query):
+    webbrowser.open("https://www.pathofexile.com/trade/search/Metamorph/"+ query)
+
 def buildpricewindow():
     #name =
 
@@ -413,32 +418,43 @@ def buildpricewindow():
     result = result.replace('"', '')
     result = result.replace(' ', '')
 
-    print("https://www.pathofexile.com/api/trade/fetch/{}?query={}".format(result, query))
+    #print("https://www.pathofexile.com/api/trade/fetch/{}?query={}".format(result, query))
+    if response.json()["total"] > 0:
+        response = requests.get("https://www.pathofexile.com/api/trade/fetch/{}?query={}".format(result, query))
+        result = response.json()["result"]
+        #jprint(result)
 
-    response = requests.get("https://www.pathofexile.com/api/trade/fetch/{}?query={}".format(result, query))
-    result = response.json()["result"]
-    #jprint(result)
-
-    MessFrame = tkinter.Tk()
-    MessFrame.configure(background="black")
-    MessFrame.geometry('400x200+200+200')
-    MessFrame.title(name)
-    T = tkinter.Text(MessFrame, height=10, width=60, bg="black", fg="pink")
-    T.pack()
-    B = tkinter.Button(MessFrame, text ="Close")
-    B.pack()
+        MessFrame = tkinter.Tk()
+        MessFrame.configure(background="black")
+        MessFrame.geometry('400x200+200+200')
+        MessFrame.title(name)
+        T = tkinter.Text(MessFrame, height=10, width=60, bg="black", fg="pink")
+        T.pack()
+        B = tkinter.Button(MessFrame, text ="Close")
+        B.pack()
 
 
-    for d in result:
+        for d in result:
 
-        if d['listing']['price'] != None:
-          amount = d['listing']['price']['amount']
-          currency = d['listing']['price']['currency']
-          if 'corrupted' in d['item']:
-            corrupt = d['item']['corrupted']
-            T.insert(tkinter.END, "price {} {} Corrupted\n".format(amount, currency))
-          else:
-            T.insert(tkinter.END, "price {} {}\n".format(amount, currency))
+            if d['listing']['price'] != None:
+              amount = d['listing']['price']['amount']
+              currency = d['listing']['price']['currency']
+              if 'corrupted' in d['item']:
+                corrupt = d['item']['corrupted']
+                T.insert(tkinter.END, "price {} {} Corrupted\n".format(amount, currency))
+              else:
+                T.insert(tkinter.END, "price {} {}\n".format(amount, currency))
 
-    MessFrame.call('wm', 'attributes', '.', '-topmost', '1')
-    MessFrame.mainloop()
+        MessFrame.call('wm', 'attributes', '.', '-topmost', '1')
+        MessFrame.mainloop()
+    else:
+        response = requests.post("https://www.pathofexile.com/api/trade/search/Metamorph", json=parameters)
+        query = response.json()["id"]
+
+        MessFrame = tkinter.Tk()
+        MessFrame.configure(background="black")
+        MessFrame.geometry('250x75+200+200')
+        w = tkinter.Label(MessFrame, text="No result's found, Want to Search on web?", fg="Pink", bg="black").grid(row=0, column=0)
+        btn1 = tkinter.Button(MessFrame, text = "Yes", bg="pink", fg="black", command=lambda: searchweb(query)).grid(row=1, column=0)
+        MessFrame.call('wm', 'attributes', '.', '-topmost', '1')
+        MessFrame.mainloop()
