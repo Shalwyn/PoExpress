@@ -10,13 +10,16 @@ from functions.keyfunctions import *
 import functions.config as config
 from functions.menu import *
 import threading
-from look import *
+#from look import *
 
-ttray = threading.Thread(target=traycreate)
-ttray.start()
+#ttray = threading.Thread(target=traycreate)
+#ttray.start()
 
 smtray = threading.Thread(target=createmainmenu)
 smtray.start()
+
+keyth = threading.Thread(target=watch_keyboard)
+keyth.start()
 
 
 
@@ -28,7 +31,7 @@ root.update()
 root.withdraw()
 DEBUG = False
 i = 0
-watch_keyboard()
+#watch_keyboard()
 
 
 originalTime = os.path.getmtime(config.clienttxt)
@@ -55,6 +58,7 @@ while True:
             t9 = threading.Thread(target=buildpricewindow)
             t9.start()
             config.statsearch = 0
+            print("statsearch = 0")
 
     elif "Map Tier:" in data and "Rarity: Rare" in data or "Rarity: Normal" in data or "Rarity: Magic" in data:
         if data != prev:

@@ -5,7 +5,6 @@ elif version_info.major == 3:
     import tkinter as tk
     from tkinter import filedialog
 from tkinter import *
-import win32gui
 import re
 import json
 import requests
@@ -14,8 +13,13 @@ import fileinput
 import threading
 import sys
 from pynput.keyboard import Key, Controller
-import pygetwindow as gw
+#import pygetwindow as gw
 import webbrowser
+import sys
+import gi
+gi.require_version("Gtk", "3.0")
+gi.require_version("Wnck", "3.0")
+from gi.repository import Gtk, Gdk, Wnck
 
 
 
@@ -26,8 +30,21 @@ def jprint(obj):
     print(text)
 
 def buyitem(whisper):
-    notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
-    notepadWindow.activate()
+    if sys.platform == "linux":
+        titlePattern = re.compile("Path of Exile")
+
+        Gtk.init([])  # necessary if not using a Gtk.main() loop
+        screen = Wnck.Screen.get_default()
+        screen.force_update()  # recommended per Wnck documentation
+
+        window_list = screen.get_windows()
+        for w in window_list:
+            if titlePattern.match(w.get_name()):
+                w.activate(0)
+    else:
+        regex = "Path of Exile"
+        notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
+        notepadWindow.activate()
 
     keyboard = Controller()
     keyboard.press(Key.enter)
@@ -115,7 +132,7 @@ def searchwindowset():
 def setclienttxt():
     clientwindow = tk.Tk()
     clientwindow.filename =  filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("Text","*.txt"),("all files","*.*")))
-    for line in fileinput.input("functions\config.py", inplace=1):
+    for line in fileinput.input("functions/config.py", inplace=1):
         if "clienttxt" in line:
 
             line = line.replace(line,"clienttxt = '{}'".format(clientwindow.filename) )
@@ -127,7 +144,7 @@ def setclienttxt():
 def setsound():
     soundwindow = tk.Tk()
     soundwindow.filename =  filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("Wave","*.wav"),("Mp3","*.mp3"),("all files","*.*")))
-    for line in fileinput.input("functions\config.py", inplace=1):
+    for line in fileinput.input("functions/config.py", inplace=1):
         if "soundfile" in line:
 
             line = line.replace(line,"soundfile = '{}'".format(soundwindow.filename) )
@@ -137,7 +154,7 @@ def setsound():
     soundwindow.mainloop()
 
 def setty(tytext):
-    for line in fileinput.input("functions\config.py", inplace=1):
+    for line in fileinput.input("functions/config.py", inplace=1):
         if "tytrade" in line:
 
             line = line.replace(line,"tytrade = '{}'".format(tytext) )

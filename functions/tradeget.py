@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-#
+
 from sys import version_info
 if version_info.major == 2:
     import Tkinter
@@ -5,21 +8,37 @@ elif version_info.major == 3:
     import tkinter as tk
 import os, time
 from playsound import playsound
-import win32gui
 import re
 from pynput.keyboard import Key, Controller
 import functions.config as config
 import threading
 from datetime import datetime
-import pygetwindow as gw
 import keyboard
+import sys
+import gi
+gi.require_version("Gtk", "3.0")
+gi.require_version("Wnck", "3.0")
+from gi.repository import Gtk, Gdk, Wnck
+
 
 league = "Metamorph"
 
 def hideout(seller):
-    regex = "Path of Exile"
-    notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
-    notepadWindow.activate()
+    if sys.platform == "linux":
+        titlePattern = re.compile("Path of Exile")
+
+        Gtk.init([])  # necessary if not using a Gtk.main() loop
+        screen = Wnck.Screen.get_default()
+        screen.force_update()  # recommended per Wnck documentation
+
+        window_list = screen.get_windows()
+        for w in window_list:
+            if titlePattern.match(w.get_name()):
+                w.activate(0)
+    else:
+        regex = "Path of Exile"
+        notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
+        notepadWindow.activate()
 
 
 
@@ -31,9 +50,21 @@ def hideout(seller):
     keyboard.release(Key.enter)
 
 def sendinvite(nicktoinvite):
-    regex = "Path of Exile"
-    notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
-    notepadWindow.activate()
+    if sys.platform == "linux":
+        titlePattern = re.compile("Path of Exile")
+
+        Gtk.init([])  # necessary if not using a Gtk.main() loop
+        screen = Wnck.Screen.get_default()
+        screen.force_update()  # recommended per Wnck documentation
+
+        window_list = screen.get_windows()
+        for w in window_list:
+            if titlePattern.match(w.get_name()):
+                w.activate(0)
+    else:
+        regex = "Path of Exile"
+        notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
+        notepadWindow.activate()
 
     keyboard = Controller()
     keyboard.press(Key.enter)
@@ -43,32 +74,70 @@ def sendinvite(nicktoinvite):
     keyboard.release(Key.enter)
 
 def finditem(itemtosearch):
-    regex = "Path of Exile"
-    notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
-    notepadWindow.activate()
+    if sys.platform == "linux":
+        titlePattern = re.compile("Path of Exile")
 
-    keys = Controller()
-    keyboard.press_and_release("ctrl+f")
-    keys.type("{}".format(itemtosearch))
+        Gtk.init([])  # necessary if not using a Gtk.main() loop
+        screen = Wnck.Screen.get_default()
+        screen.force_update()  # recommended per Wnck documentation
 
-
-def sendtrade(nicktotrade):
-    regex = "Path of Exile"
-    notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
-    notepadWindow.activate()
+        window_list = screen.get_windows()
+        for w in window_list:
+            if titlePattern.match(w.get_name()):
+                w.activate(0)
+    else:
+        regex = "Path of Exile"
+        notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
+        notepadWindow.activate()
 
 
     keyboard = Controller()
-    keyboard.press(Key.enter)
-    keyboard.release(Key.enter)
-    keyboard.type("/tradewith {}".format(nicktotrade))
-    keyboard.press(Key.enter)
-    keyboard.release(Key.enter)
+    keyboard.press(Key.ctrl)
+    keyboard.press('f')
+    keyboard.release(Key.ctrl)
+    keyboard.release('f')
+
+    keyboard.type("{}".format(itemtosearch))
+
+
+
+def sendtrade(nicktotrade):
+    if sys.platform == "linux":
+        titlePattern = re.compile("Path of Exile")
+
+        Gtk.init([])  # necessary if not using a Gtk.main() loop
+        screen = Wnck.Screen.get_default()
+        screen.force_update()  # recommended per Wnck documentation
+
+        window_list = screen.get_windows()
+        for w in window_list:
+            if titlePattern.match(w.get_name()):
+                w.activate(0)
+    else:
+        regex = "Path of Exile"
+        notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
+        notepadWindow.activate()
+
+
+    keyboard = Controller()
+    keyboard.type("\n/tradewith {}\n".format(nicktotrade))
 
 def sendty(nicktotrade):
-    regex = "Path of Exile"
-    notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
-    notepadWindow.activate()
+    if sys.platform == "linux":
+        titlePattern = re.compile("Path of Exile")
+
+        Gtk.init([])  # necessary if not using a Gtk.main() loop
+        screen = Wnck.Screen.get_default()
+        screen.force_update()  # recommended per Wnck documentation
+
+        window_list = screen.get_windows()
+        for w in window_list:
+            if titlePattern.match(w.get_name()):
+                w.activate(0)
+    else:
+        regex = "Path of Exile"
+        notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
+        notepadWindow.activate()
 
 
 
@@ -82,9 +151,21 @@ def sendty(nicktotrade):
 
 
 def kickparty(nicktokick, window):
-    regex = "Path of Exile"
-    notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
-    notepadWindow.activate()
+    if sys.platform == "linux":
+        titlePattern = re.compile("Path of Exile")
+
+        Gtk.init([])  # necessary if not using a Gtk.main() loop
+        screen = Wnck.Screen.get_default()
+        screen.force_update()  # recommended per Wnck documentation
+
+        window_list = screen.get_windows()
+        for w in window_list:
+            if titlePattern.match(w.get_name()):
+                w.activate(0)
+    else:
+        regex = "Path of Exile"
+        notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
+        notepadWindow.activate()
 
 
 
