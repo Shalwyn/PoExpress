@@ -15,11 +15,13 @@ import threading
 from datetime import datetime
 import keyboard
 import sys
-import gi
-gi.require_version("Gtk", "3.0")
-gi.require_version("Wnck", "3.0")
-from gi.repository import Gtk, Gdk, Wnck
-
+if sys.platform == "linux":
+    import gi
+    gi.require_version("Gtk", "3.0")
+    gi.require_version("Wnck", "3.0")
+    from gi.repository import Gtk, Gdk, Wnck
+else:
+    import pygetwindow as gw
 
 league = "Metamorph"
 
@@ -204,22 +206,22 @@ def tradewindow():
     now = dateTimeObj.strftime("%H:%M:%S")
     window = tk.Tk()
     window.title("Trade")
-    window.configure(background="black")
+    window.configure(background=config.fgcolor)
     windowtext = " ".join(item)
     windowprice = " ".join(price)
     windowstash = " ".join(stash)
-    T = tk.Text(window, height=10, width=60, bg="black", fg="pink")
+    T = tk.Text(window, height=10, width=60, fg=config.textcolor, bg=config.bgcolor)
     T.grid(row=0, column=0, columnspan=5,  sticky="nsew")
     T.insert(tk.END, "Nick: {} \n".format(buyer))
     T.insert(tk.END, "Item: {} \n".format(windowtext))
     T.insert(tk.END, "Price: {} \n".format(windowprice))
     T.insert(tk.END, "{} \n".format(windowstash))
     T.insert(tk.END, "{} \n".format(now))
-    btn1 = tk.Button(window, text = "Invite", bg="pink", fg="black", command=lambda: sendinvite(buyer)).grid(row=1, column=0)
-    btn2 = tk.Button(window, text = "Trade", bg="pink", fg="black", command=lambda: sendtrade(buyer)).grid(row=1, column=1)
-    btn5 = tk.Button(window, text = "Find Item", bg="pink", fg="black", command=lambda: finditem(windowtext)).grid(row=1, column=2)
-    btn4 = tk.Button(window, text = "Ty", bg="pink", fg="black", command=lambda: sendty(buyer)).grid(row=1, column=3)
-    btn3 = tk.Button(window, text = "Kick", bg="pink", fg="black", command=lambda: kickparty(buyer, window)).grid(row=1, column=4)
+    btn1 = tk.Button(window, text = "Invite", bg=config.bgcolor, fg=config.fgcolor, command=lambda: sendinvite(buyer)).grid(row=1, column=0)
+    btn2 = tk.Button(window, text = "Trade", bg=config.bgcolor, fg=config.fgcolor, command=lambda: sendtrade(buyer)).grid(row=1, column=1)
+    btn5 = tk.Button(window, text = "Find Item", bg=config.bgcolor, fg=config.fgcolor, command=lambda: finditem(windowtext)).grid(row=1, column=2)
+    btn4 = tk.Button(window, text = "Ty", bg=config.bgcolor, fg=config.fgcolor, command=lambda: sendty(buyer)).grid(row=1, column=3)
+    btn3 = tk.Button(window, text = "Kick", bg=config.bgcolor, fg=config.fgcolor, command=lambda: kickparty(buyer, window)).grid(row=1, column=4)
 
     window.call('wm', 'attributes', '.', '-topmost', '1')
 #    window.after(0, readclient())
@@ -250,18 +252,18 @@ def outgoinwindow():
     now = dateTimeObj.strftime("%H:%M:%S")
     window = tk.Tk()
     window.title("Trade")
-    window.configure(background="black")
+    window.configure(background=config.fgcolor)
     windowtext = " ".join(item)
     windowprice = " ".join(price)
     windowstash = " ".join(stash)
-    T = tk.Text(window, height=10, width=60, bg="black", fg="pink")
+    T = tk.Text(window, height=10, width=60, fg=config.textcolor, bg=config.bgcolor)
     T.grid(row=0, column=0, columnspan=3,  sticky="nsew")
     T.insert(tk.END, "Nick: {} \n".format(seller))
     T.insert(tk.END, "Item: {} \n".format(windowtext))
     T.insert(tk.END, "Price: {} \n".format(windowprice))
     T.insert(tk.END, "{} \n".format(now))
-    btn1 = tk.Button(window, text = "Visit Hideout", bg="pink", fg="black", command=lambda: hideout(seller)).grid(row=1, column=0)
-    btn2 = tk.Button(window, text = "Ty", bg="pink", fg="black", command=lambda: sendty(seller)).grid(row=1, column=1)
+    btn1 = tk.Button(window, text = "Visit Hideout", bg=config.bgcolor, fg=config.fgcolor, command=lambda: hideout(seller)).grid(row=1, column=0)
+    btn2 = tk.Button(window, text = "Ty", bg=config.bgcolor, fg=config.fgcolor, command=lambda: sendty(seller)).grid(row=1, column=1)
 
     window.call('wm', 'attributes', '.', '-topmost', '1')
 #    window.after(0, readclient())

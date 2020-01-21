@@ -8,14 +8,16 @@ from functions.tradeget import *
 from functions.pricecheck import *
 from functions.keyfunctions import *
 import functions.config as config
-from functions.menu import *
+import functions.menu as menu
 import threading
+import fileinput
 #from look import *
 
 #ttray = threading.Thread(target=traycreate)
 #ttray.start()
 
-smtray = threading.Thread(target=createmainmenu)
+#redeemer = IntVar(value=config.redeemer)
+smtray = threading.Thread(target=menu.createmainmenu)
 smtray.start()
 
 keyth = threading.Thread(target=watch_keyboard)
@@ -35,7 +37,9 @@ i = 0
 
 
 originalTime = os.path.getmtime(config.clienttxt)
+
 while True:
+
     try:
         data = root.clipboard_get()
     except (TclError, UnicodeDecodeError):  # ignore non-text clipboard contents
@@ -103,4 +107,34 @@ while True:
         if league in last_line and "@To" in last_line:
             t18 = threading.Thread(target=outgoinwindow)
             t18.start()
+        if "Redeemer" in last_line and config.redeemer < 3:
+            config.redeemer = config.redeemer + 1
+            for line in fileinput.input("functions/config.py", inplace=1):
+                if "redeemer" in line:
+                    line = line.replace(line,"redeemer = {}\n".format(config.redeemer) )
+                sys.stdout.write(line)
+            menu.act1.config(text=config.redeemer)
+        if "Crusader" in last_line and config.crusader < 3:
+            config.crusader = config.crusader + 1
+            for line in fileinput.input("functions/config.py", inplace=1):
+                if "crusader" in line:
+                    line = line.replace(line,"crusader = {}\n".format(config.crusader) )
+                sys.stdout.write(line)
+            menu.act2.config(text=config.crusader)
+        if "Warlord" in last_line and config.warlord < 3:
+            config.warlord = config.warlord + 1
+            for line in fileinput.input("functions/config.py", inplace=1):
+                if "warlord" in line:
+                    line = line.replace(line,"warlord = {}\n".format(config.warlord) )
+                sys.stdout.write(line)
+            menu.act3.config(text=config.warlord)
+        if "Hunter" in last_line and config.hunter < 3:
+            config.hunter = config.hunter + 1
+            for line in fileinput.input("functions/config.py", inplace=1):
+                if "hunter" in line:
+                    line = line.replace(line,"hunter = {}\n".format(config.hunter) )
+                sys.stdout.write(line)
+            menu.act4.config(text=config.hunter)
+            #menu.act1.configure(text=config.redeemer)
+
         originalTime = os.path.getmtime(config.clienttxt)

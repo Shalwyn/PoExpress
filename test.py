@@ -1,17 +1,20 @@
-import json
-import requests
-from itertools import chain
-from typing import List, Tuple
+import tkinter as tk
 
-def jprint(obj):
-    # create a formatted string of the Python JSON object
-    text = json.dumps(obj, sort_keys=True, indent=4)
-    f = open('mod.txt', 'a')
-    print(text, file=f)
+counter = 0
+def counter_label(label):
+  def count():
+    global counter
+    counter += 1
+    label.config(text=str(counter))
+    label.after(1000, count)
+  count()
 
 
-json_blob = requests.get(url="https://www.pathofexile.com/api/trade/data/stats").json()
-
-jprint(json_blob)
-
-#items = tuple(chain(*[[build_from_json(y) for y in x["entries"]] for x in json_blob["result"]]))
+root = tk.Tk()
+root.title("Counting Seconds")
+label = tk.Label(root, fg="green")
+label.pack()
+counter_label(label)
+button = tk.Button(root, text='Stop', width=25, command=root.destroy)
+button.pack()
+root.mainloop()

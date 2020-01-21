@@ -2,9 +2,10 @@ import keyboard
 import re
 import functions.config as config
 import sys
-from pynput.keyboard import Key, KeyCode, Listener, Controller
+if sys.platform == "linux":
+    from pynput.keyboard import Key, KeyCode, Listener, Controller
 
-keyboard = Controller()
+    keyboard = Controller()
 
 if sys.platform == "linux":
     # Your functions

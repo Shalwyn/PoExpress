@@ -251,6 +251,9 @@ def buildrareitem(itemparse):
         elif mod[z] == "# to maximum Energy Shield":
             if "augmented" in itemparse:
                 mod[z] = "# to maximum Energy Shield (Local)"
+        elif mod[z] == "#% increased Attack Speed":
+            if "augmented" in itemparse:
+                mod[z] = "#% increased Attack Speed (Local)"
 
 
 
@@ -425,10 +428,10 @@ def buildpricewindow():
         #jprint(result)
 
         MessFrame = tkinter.Tk()
-        MessFrame.configure(background="black")
+        MessFrame.configure(background=config.bgcolor)
         MessFrame.geometry('400x200+200+200')
         MessFrame.title(name)
-        T = tkinter.Text(MessFrame, height=10, width=60, bg="black", fg="pink")
+        T = tkinter.Text(MessFrame, height=10, width=60, fg=config.fgcolor, bg=config.bgcolor)
         T.pack()
         B = tkinter.Button(MessFrame, text ="Close")
         B.pack()
@@ -452,9 +455,9 @@ def buildpricewindow():
         query = response.json()["id"]
 
         MessFrame = tkinter.Tk()
-        MessFrame.configure(background="black")
+        MessFrame.configure(background=config.fgcolor)
         MessFrame.geometry('250x75+200+200')
-        w = tkinter.Label(MessFrame, text="No result's found, Want to Search on web?", fg="Pink", bg="black").grid(row=0, column=0)
-        btn1 = tkinter.Button(MessFrame, text = "Yes", bg="pink", fg="black", command=lambda: searchweb(query)).grid(row=1, column=0)
+        w = tkinter.Label(MessFrame, text="No result's found, Want to Search on web?", fg=config.textcolor, bg=config.bgcolor).grid(row=0, column=0)
+        btn1 = tkinter.Button(MessFrame, text = "Yes", bg=config.bgcolor, fg=config.fgcolor, command=lambda: searchweb(query)).grid(row=1, column=0)
         MessFrame.call('wm', 'attributes', '.', '-topmost', '1')
         MessFrame.mainloop()
