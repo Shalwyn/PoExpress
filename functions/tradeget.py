@@ -150,6 +150,32 @@ def sendty(nicktotrade):
     keyboard.press(Key.enter)
     keyboard.release(Key.enter)
 
+def sendbusy(nicktotrade):
+    if sys.platform == "linux":
+        titlePattern = re.compile("Path of Exile")
+
+        Gtk.init([])  # necessary if not using a Gtk.main() loop
+        screen = Wnck.Screen.get_default()
+        screen.force_update()  # recommended per Wnck documentation
+
+        window_list = screen.get_windows()
+        for w in window_list:
+            if titlePattern.match(w.get_name()):
+                w.activate(0)
+    else:
+        regex = "Path of Exile"
+        notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
+        notepadWindow.activate()
+
+
+
+    keyboard = Controller()
+    keyboard.press(Key.enter)
+    keyboard.release(Key.enter)
+    keyboard.type("@{} {}".format(nicktotrade, "Sorry busy right now, will invite you when i'm done"))
+    keyboard.press(Key.enter)
+    keyboard.release(Key.enter)
+
 
 
 def kickparty(nicktokick, window):
@@ -211,17 +237,18 @@ def tradewindow():
     windowprice = " ".join(price)
     windowstash = " ".join(stash)
     T = tk.Text(window, height=10, width=60, fg=config.textcolor, bg=config.bgcolor)
-    T.grid(row=0, column=0, columnspan=5,  sticky="nsew")
+    T.grid(row=0, column=0, columnspan=6,  sticky="nsew")
     T.insert(tk.END, "Nick: {} \n".format(buyer))
     T.insert(tk.END, "Item: {} \n".format(windowtext))
     T.insert(tk.END, "Price: {} \n".format(windowprice))
     T.insert(tk.END, "{} \n".format(windowstash))
     T.insert(tk.END, "{} \n".format(now))
     btn1 = tk.Button(window, text = "Invite", bg=config.bgcolor, fg=config.fgcolor, command=lambda: sendinvite(buyer)).grid(row=1, column=0)
-    btn2 = tk.Button(window, text = "Trade", bg=config.bgcolor, fg=config.fgcolor, command=lambda: sendtrade(buyer)).grid(row=1, column=1)
+    btn6 = tk.Button(window, text = "Busy", bg=config.bgcolor, fg=config.fgcolor, command=lambda: sendbusy(buyer)).grid(row=1, column=1)
     btn5 = tk.Button(window, text = "Find Item", bg=config.bgcolor, fg=config.fgcolor, command=lambda: finditem(windowtext)).grid(row=1, column=2)
-    btn4 = tk.Button(window, text = "Ty", bg=config.bgcolor, fg=config.fgcolor, command=lambda: sendty(buyer)).grid(row=1, column=3)
-    btn3 = tk.Button(window, text = "Kick", bg=config.bgcolor, fg=config.fgcolor, command=lambda: kickparty(buyer, window)).grid(row=1, column=4)
+    btn2 = tk.Button(window, text = "Trade", bg=config.bgcolor, fg=config.fgcolor, command=lambda: sendtrade(buyer)).grid(row=1, column=3)
+    btn4 = tk.Button(window, text = "Ty", bg=config.bgcolor, fg=config.fgcolor, command=lambda: sendty(buyer)).grid(row=1, column=4)
+    btn3 = tk.Button(window, text = "Kick", bg=config.bgcolor, fg=config.fgcolor, command=lambda: kickparty(buyer, window)).grid(row=1, column=5)
 
     window.call('wm', 'attributes', '.', '-topmost', '1')
 #    window.after(0, readclient())

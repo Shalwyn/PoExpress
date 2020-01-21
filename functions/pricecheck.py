@@ -107,6 +107,7 @@ def builduniquestat(itemparse):
         mod[z] = splitmap[y].replace('+', '')
         mod[z] = re.sub("[^a-zA-Z %]+", "#", mod[z])
         #mod[z] = re.sub(r"\d+", "#", mod[z])
+        print(mod[z])
 
         if mod[z] == "#% increased Armour and Energy Shield":
             if "augmented" in itemparse:
@@ -132,6 +133,9 @@ def builduniquestat(itemparse):
         elif mod[z] == "# to maximum Energy Shield":
             if "augmented" in itemparse:
                 mod[z] = "# to maximum Energy Shield (Local)"
+        elif mod[z] == "#% increased Evasion Rating":
+            if "augmented" in itemparse:
+                mod[z] = "#% increased Evasion Rating (Local)"
 
 
 
@@ -254,6 +258,12 @@ def buildrareitem(itemparse):
         elif mod[z] == "#% increased Attack Speed":
             if "augmented" in itemparse:
                 mod[z] = "#% increased Attack Speed (Local)"
+        elif mod[z] == "#% increased Evasion Rating":
+            if "augmented" in itemparse:
+                mod[z] = "#% increased Evasion Rating (Local)"
+        elif mod[z] == "# to Evasion Rating":
+            if "augmented" in itemparse:
+                mod[z] = "# to Evasion Rating (Local)"
 
 
 
@@ -429,7 +439,7 @@ def buildpricewindow():
 
         MessFrame = tkinter.Tk()
         MessFrame.configure(background=config.bgcolor)
-        MessFrame.geometry('400x200+200+200')
+        MessFrame.geometry('300x200+200+200')
         MessFrame.title(name)
         T = tkinter.Text(MessFrame, height=10, width=60, fg=config.fgcolor, bg=config.bgcolor)
         T.pack()
