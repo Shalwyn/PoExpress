@@ -11,6 +11,7 @@ import functions.modlist as modlist
 import functions.config as config
 import webbrowser
 
+
 def jprint(obj):
     # create a formatted string of the Python JSON object
     text = json.dumps(obj, sort_keys=True, indent=4)
@@ -107,7 +108,7 @@ def builduniquestat(itemparse):
         mod[z] = splitmap[y].replace('+', '')
         mod[z] = re.sub("[^a-zA-Z %]+", "#", mod[z])
         #mod[z] = re.sub(r"\d+", "#", mod[z])
-        print(mod[z])
+
 
         if mod[z] == "#% increased Armour and Energy Shield":
             if "augmented" in itemparse:
@@ -166,9 +167,13 @@ def buildrareitem(itemparse):
     links = 0
     global parameters
     global name
+    global mod
+    global value
+    value = {}
+    mod = {}
     endstep = itemparse.count('\n')
     splitmap = itemparse.splitlines()
-    mod = {}
+
     value = {}
 
     for x in range(0, itemparse.count('\n')):
@@ -231,6 +236,7 @@ def buildrareitem(itemparse):
         mod[z] = re.sub("[^a-zA-Z %]+", "#", mod[z])
         #mod[z] = re.sub(r"\d+", "#", mod[z])
 
+
         if mod[z] == "#% increased Armour and Energy Shield":
             if "augmented" in itemparse:
                 mod[z] = "#% increased Armour and Energy Shield (Local)"
@@ -268,7 +274,7 @@ def buildrareitem(itemparse):
 
 
         value[z] = splitmap[y].replace('+', '')
-        value[z] = re.sub(r"[^0-9-]", "", value[z])
+        value[z] = re.sub(r"[^0-9-.]", "", value[z])
 
         if "Adds" in splitmap[y]:
             if "Physical Damage" in splitmap[y] or "Chaos Damage" in splitmap[y] or "Cold Damage" in splitmap[y] or "Fire Damage" in splitmap[y] or "Lightning Damage" in splitmap[y] and "to" in splitmap[y]:
@@ -417,9 +423,30 @@ def buildgem(itemparse):
 def searchweb(query):
     webbrowser.open("https://www.pathofexile.com/trade/search/Metamorph/"+ query)
 
-def buildpricewindow():
-    #name =
+def searchnewrare(mod, value):
+    x = 0
+    parameters["query"]["stats"][0]["filters"].clear()
+    for k in mod:
+        print(mod[x].get())
+        print(value[x].get())
 
+        if mod[x].get() in modlist.mods:
+            for y in range(0, len(modlist.mods[mod[x].get()])):
+                if "explicit" in modlist.mods[mod[x].get()][y]:
+                    explicitstat = modlist.mods[mod[x].get()][y]
+            min = value[x].get()
+
+
+            parameters["query"]["stats"][0]["filters"].append({"id": explicitstat, "value": {"min": min}})
+        #addfiltermods["filters"].update(addmod)
+
+        x = x + 1
+    MessFrame.destroy()
+    buildpricewindow()
+
+def buildpricewindow():
+    global MessFrame
+    jprint(parameters)
     response = requests.post("https://www.pathofexile.com/api/trade/search/Metamorph", json=parameters)
     #jprint(response.json())
     query = response.json()["id"]
@@ -461,13 +488,35 @@ def buildpricewindow():
         MessFrame.call('wm', 'attributes', '.', '-topmost', '1')
         MessFrame.mainloop()
     else:
+        e = {}
+        ev = {}
+
         response = requests.post("https://www.pathofexile.com/api/trade/search/Metamorph", json=parameters)
         query = response.json()["id"]
 
         MessFrame = tkinter.Tk()
-        MessFrame.configure(background=config.fgcolor)
-        MessFrame.geometry('250x75+200+200')
-        w = tkinter.Label(MessFrame, text="No result's found, Want to Search on web?", fg=config.textcolor, bg=config.bgcolor).grid(row=0, column=0)
-        btn1 = tkinter.Button(MessFrame, text = "Yes", bg=config.bgcolor, fg=config.fgcolor, command=lambda: searchweb(query)).grid(row=1, column=0)
+        MessFrame.configure(background=config.bgcolor)
+        MessFrame.geometry('400x300+200+200')
+        w = tkinter.Label(MessFrame, text="No result's Found", fg=config.textcolor, bg=config.bgcolor).grid(row=0, column=0, columnspan=2)
+        x = 0
+        for k in mod:
+            e[x] = tkinter.Entry(MessFrame, width=40, fg=config.fgcolor, bg=config.bgcolor)
+            e[x].insert(0, mod[x])
+            e[x].grid(row=x+1, column=0)
+            ev[x] = tkinter.Entry(MessFrame, width=5, fg=config.fgcolor, bg=config.bgcolor)
+            ev[x].insert(0, value[x])
+            ev[x].grid(row=x+1, column=1)
+            x = x + 1
+        btn1 = tkinter.Button(MessFrame, text="Search Again", bg=config.bgcolor, fg=config.fgcolor,
+                              command=lambda: searchnewrare(e, ev)).grid(row=x+1, column=0)
+        btn2 = tkinter.Button(MessFrame, text="Search on Web", bg=config.bgcolor, fg=config.fgcolor,
+                              command=lambda: searchweb(query)).grid(row=x+2, column=0)
         MessFrame.call('wm', 'attributes', '.', '-topmost', '1')
         MessFrame.mainloop()
+
+
+
+
+
+
+

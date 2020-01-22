@@ -1,19 +1,16 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-#
+# coding=utf-8
 
 from sys import version_info
 if version_info.major == 2:
     import Tkinter
 elif version_info.major == 3:
     import tkinter as tk
-import os, time
 from playsound import playsound
 import re
 from pynput.keyboard import Key, Controller
 import functions.config as config
-import threading
 from datetime import datetime
-import keyboard
 import sys
 if sys.platform == "linux":
     import gi
@@ -141,14 +138,17 @@ def sendty(nicktotrade):
         notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
         notepadWindow.activate()
 
-
-
     keyboard = Controller()
     keyboard.press(Key.enter)
     keyboard.release(Key.enter)
-    keyboard.type("@{} {}".format(nicktotrade, config.tytrade))
-    keyboard.press(Key.enter)
-    keyboard.release(Key.enter)
+    keyboard.press(Key.shift)
+    keyboard.press(key="q")
+    keyboard.release(Key.shift)
+    keyboard.release(key='q')
+    keyboard.type(u'\u0040')
+    #keyboard.type("@{} {}".format(nicktotrade, config.tytrade))
+    #keyboard.press(Key.enter)
+    #keyboard.release(Key.enter)
 
 def sendbusy(nicktotrade):
     if sys.platform == "linux":
@@ -219,7 +219,7 @@ def tradewindow():
         del splitmsg[0:splitmsg.index("wtb")]
         buyer = buyer[:-1]
         playsound(sound)
-    if 'Hi,' in splitmsg  and "@From" in splitmsg:
+    if 'Hi,' in splitmsg and "@From" in splitmsg:
         buyer = splitmsg[splitmsg.index("Hi,")-1]
         del splitmsg[0:splitmsg.index("Hi,")]
         buyer = buyer[:-1]
