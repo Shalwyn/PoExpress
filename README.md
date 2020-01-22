@@ -22,6 +22,12 @@ Strg + C / Alt + D: Pricecheck
 
 !! Attention: This is early Access, Frames and Artwork will be edited later !!
 
-![Main](/Images/main.png) ![options](/Images/options.png)
-![Sample price](/Images/price.PNG) ![Sample trade](/Images/trade.png)
+![Main](/Images/main.png) 
+
+![options](/Images/options.png)
+
+![Sample price](/Images/price.PNG) 
+
+![Sample trade](/Images/trade.png)
+
 ![advance search](/Images/advance.png)
