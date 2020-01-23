@@ -22,12 +22,26 @@ Strg + C / Alt + D: Pricecheck
 
 !! Attention: This is early Access, Frames and Artwork will be edited later !!
 
-![Main](/Images/main.png) 
+Main Window:
+
+![Main](/Images/main.png)
+
+Option Window:
 
 ![options](/Images/options.png)
 
-![Sample price](/Images/price.PNG) 
+Price Window:
+
+![Sample price](/Images/price.png)
+
+Trade Window:
 
 ![Sample trade](/Images/trade.png)
 
+Advance Search:
+
 ![advance search](/Images/advance.png)
+
+Unique Search:
+
+![Unique Search](/Images/UnSearch.png)
