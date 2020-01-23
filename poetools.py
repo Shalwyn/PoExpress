@@ -4,25 +4,31 @@
 from functions.pricecheck import *
 from functions.keyfunctions import *
 import sys
-print(sys.platform)
-if sys.platform != "linux":
-    from look import *
 import functions.config as config
 import functions.menu as menu
 import functions.tradeget as tradeget
 import threading
 import fileinput
+import psutil
+import PySimpleGUIQt as sg
+
+menu_def = ['BLANK', 'E&xit']
+
+tray = sg.SystemTray(menu=menu_def, filename=r'icon.png')
 
 
-if sys.platform != "linux":
-    ttray = threading.Thread(target=traycreate)
-    ttray.start()
+import functions.menu as menu
+#trayth = threading.Thread(target=icon.run())
+#trayth.start()
 
 smtray = threading.Thread(target=menu.createmainmenu)
 smtray.start()
 
 keyth = threading.Thread(target=watch_keyboard)
 keyth.start()
+
+#trayth = threading.Thread(target=traycreate)
+#trayth.start()
 
 prev = ""
 prevst = ""
@@ -35,6 +41,22 @@ i = 0
 originalTime = os.path.getmtime(config.clienttxt)
 
 while True:
+    menu_item = tray.Read()
+    if menu_item == 'Exit':
+        if sys.platform == "linux":
+            PROCNAME = "python"
+            for proc in psutil.process_iter():
+                # check whether the process name matches
+                if proc.name() == PROCNAME:
+                    proc.kill()
+        else:
+            PROCNAME = "python.exe"
+
+            for proc in psutil.process_iter():
+                # check whether the process name matches
+                if proc.name() == PROCNAME:
+                    proc.kill()
+
 
     try:
         data = root.clipboard_get()
