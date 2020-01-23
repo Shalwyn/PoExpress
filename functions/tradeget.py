@@ -1,6 +1,6 @@
 #!/usr/bin/python
-# coding=utf-8
-
+# -*- coding: utf-8 -*-
+import time
 from sys import version_info
 if version_info.major == 2:
     import Tkinter
@@ -12,6 +12,7 @@ from pynput.keyboard import Key, Controller
 import functions.config as config
 from datetime import datetime
 import sys
+from tkinter import ttk
 if sys.platform == "linux":
     import gi
     gi.require_version("Gtk", "3.0")
@@ -19,7 +20,7 @@ if sys.platform == "linux":
     from gi.repository import Gtk, Gdk, Wnck
 else:
     import pygetwindow as gw
-
+import sys
 league = "Metamorph"
 
 def hideout(seller):
@@ -39,12 +40,22 @@ def hideout(seller):
         notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
         notepadWindow.activate()
 
-
+    time.sleep(1)
 
     keyboard = Controller()
     keyboard.press(Key.enter)
     keyboard.release(Key.enter)
-    keyboard.type("/hideout {}".format(seller[:-1]))
+    time.sleep(0.1)
+    keyboard.press(Key.shift_l)
+    time.sleep(0.1)
+    keyboard.press('7')
+    time.sleep(0.1)
+    keyboard.release('7')
+    time.sleep(0.1)
+    keyboard.release(Key.shift_l)
+    (0.1)
+    keyboard.type("hideout {}".format(seller[:-1]))
+    time.sleep(0.1)
     keyboard.press(Key.enter)
     keyboard.release(Key.enter)
 
@@ -65,10 +76,22 @@ def sendinvite(nicktoinvite):
         notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
         notepadWindow.activate()
 
+    time.sleep(1)
+
     keyboard = Controller()
     keyboard.press(Key.enter)
     keyboard.release(Key.enter)
-    keyboard.type("/invite {}".format(nicktoinvite))
+    time.sleep(0.1)
+    keyboard.press(Key.shift_l)
+    time.sleep(0.1)
+    keyboard.press('7')
+    time.sleep(0.1)
+    keyboard.release('7')
+    time.sleep(0.1)
+    keyboard.release(Key.shift_l)
+    (0.1)
+    keyboard.type("invite {}".format(nicktoinvite))
+    time.sleep(0.1)
     keyboard.press(Key.enter)
     keyboard.release(Key.enter)
 
@@ -89,6 +112,7 @@ def finditem(itemtosearch):
         notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
         notepadWindow.activate()
 
+    time.sleep(1)
 
     keyboard = Controller()
     keyboard.press(Key.ctrl)
@@ -117,9 +141,24 @@ def sendtrade(nicktotrade):
         notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
         notepadWindow.activate()
 
+    time.sleep(1)
 
     keyboard = Controller()
-    keyboard.type("\n/tradewith {}\n".format(nicktotrade))
+    keyboard.press(Key.enter)
+    keyboard.release(Key.enter)
+    time.sleep(0.1)
+    keyboard.press(Key.shift_l)
+    time.sleep(0.1)
+    keyboard.press('7')
+    time.sleep(0.1)
+    keyboard.release('7')
+    time.sleep(0.1)
+    keyboard.release(Key.shift_l)
+    (0.1)
+    keyboard.type("tradewith {}".format(nicktotrade))
+    time.sleep(0.1)
+    keyboard.press(Key.enter)
+    keyboard.release(Key.enter)
 
 def sendty(nicktotrade):
     if sys.platform == "linux":
@@ -138,17 +177,17 @@ def sendty(nicktotrade):
         notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
         notepadWindow.activate()
 
+    time.sleep(1)
+
     keyboard = Controller()
     keyboard.press(Key.enter)
     keyboard.release(Key.enter)
-    keyboard.press(Key.shift)
-    keyboard.press(key="q")
-    keyboard.release(Key.shift)
-    keyboard.release(key='q')
     keyboard.type(u'\u0040')
-    #keyboard.type("@{} {}".format(nicktotrade, config.tytrade))
-    #keyboard.press(Key.enter)
-    #keyboard.release(Key.enter)
+    time.sleep(0.1)
+    keyboard.type("{} {}".format(nicktotrade, config.tytrade))
+    time.sleep(0.1)
+    keyboard.press(Key.enter)
+    keyboard.release(Key.enter)
 
 def sendbusy(nicktotrade):
     if sys.platform == "linux":
@@ -167,18 +206,21 @@ def sendbusy(nicktotrade):
         notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
         notepadWindow.activate()
 
-
+    time.sleep(1)
 
     keyboard = Controller()
     keyboard.press(Key.enter)
     keyboard.release(Key.enter)
-    keyboard.type("@{} {}".format(nicktotrade, "Sorry busy right now, will invite you when i'm done"))
+    keyboard.type(u'\u0040')
+    time.sleep(0.1)
+    keyboard.type("{} {}".format(nicktotrade, "Sorry busy right now, will invite you when i'm done"))
+    time.sleep(0.1)
     keyboard.press(Key.enter)
     keyboard.release(Key.enter)
 
 
 
-def kickparty(nicktokick, window):
+def kickparty(nicktokick, window, tasktabs):
     if sys.platform == "linux":
         titlePattern = re.compile("Path of Exile")
 
@@ -195,19 +237,26 @@ def kickparty(nicktokick, window):
         notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
         notepadWindow.activate()
 
-
+    time.sleep(1)
 
     keyboard = Controller()
     keyboard.press(Key.enter)
     keyboard.release(Key.enter)
+    time.sleep(0.1)
     keyboard.type("/kick {}".format(nicktokick))
+    time.sleep(0.1)
     keyboard.press(Key.enter)
     keyboard.release(Key.enter)
 
-    window.destroy()
+    tasktabs.forget(tasktabs.select())
 
-def tradewindow():
-    #global window
+
+
+
+def addtabtrade(window, tasktabs):
+
+    dateTimeObj = datetime.now()
+    now = dateTimeObj.strftime("%H:%M:%S")
     sound = config.soundfile
 
     clientding = open(config.clienttxt, 'r', encoding='UTF8')
@@ -215,43 +264,63 @@ def tradewindow():
     clientding.close()
     splitmsg = last_line.split()
     if 'wtb' in splitmsg and "@From" in splitmsg:
-        buyer = splitmsg[splitmsg.index("wtb")-1]
+        buyer = splitmsg[splitmsg.index("wtb") - 1]
         del splitmsg[0:splitmsg.index("wtb")]
         buyer = buyer[:-1]
         playsound(sound)
     if 'Hi,' in splitmsg and "@From" in splitmsg:
-        buyer = splitmsg[splitmsg.index("Hi,")-1]
+        buyer = splitmsg[splitmsg.index("Hi,") - 1]
         del splitmsg[0:splitmsg.index("Hi,")]
         buyer = buyer[:-1]
-        item = splitmsg[splitmsg.index("your")+1:splitmsg.index("listed")]
-        price = splitmsg[splitmsg.index("for")+1:splitmsg.index("for")+3]
-        stash = splitmsg[splitmsg.index(league)+1:splitmsg.index(league)+11]
+        item = splitmsg[splitmsg.index("your") + 1:splitmsg.index("listed")]
+        price = splitmsg[splitmsg.index("for") + 1:splitmsg.index("for") + 3]
+        stash = splitmsg[splitmsg.index(league) + 1:splitmsg.index(league) + 11]
         playsound(sound)
 
-    dateTimeObj = datetime.now()
-    now = dateTimeObj.strftime("%H:%M:%S")
-    window = tk.Tk()
-    window.title("Trade")
-    window.configure(background=config.fgcolor)
     windowtext = " ".join(item)
     windowprice = " ".join(price)
     windowstash = " ".join(stash)
-    T = tk.Text(window, height=10, width=60, fg=config.textcolor, bg=config.bgcolor)
-    T.grid(row=0, column=0, columnspan=6,  sticky="nsew")
+
+
+    Tab = ttk.Frame(tasktabs)
+
+    tasktabs.add(Tab, text=buyer)
+    tasktabs.grid(row=0, column=0, sticky="W")
+    T = tk.Text(Tab, height=10, width=60, fg=config.textcolor, bg=config.bgcolor)
+    T.grid(row=1, column=0, columnspan=6, sticky="nsew")
     T.insert(tk.END, "Nick: {} \n".format(buyer))
     T.insert(tk.END, "Item: {} \n".format(windowtext))
     T.insert(tk.END, "Price: {} \n".format(windowprice))
     T.insert(tk.END, "{} \n".format(windowstash))
     T.insert(tk.END, "{} \n".format(now))
-    btn1 = tk.Button(window, text = "Invite", bg=config.bgcolor, fg=config.fgcolor, command=lambda: sendinvite(buyer)).grid(row=1, column=0)
-    btn6 = tk.Button(window, text = "Busy", bg=config.bgcolor, fg=config.fgcolor, command=lambda: sendbusy(buyer)).grid(row=1, column=1)
-    btn5 = tk.Button(window, text = "Find Item", bg=config.bgcolor, fg=config.fgcolor, command=lambda: finditem(windowtext)).grid(row=1, column=2)
-    btn2 = tk.Button(window, text = "Trade", bg=config.bgcolor, fg=config.fgcolor, command=lambda: sendtrade(buyer)).grid(row=1, column=3)
-    btn4 = tk.Button(window, text = "Ty", bg=config.bgcolor, fg=config.fgcolor, command=lambda: sendty(buyer)).grid(row=1, column=4)
-    btn3 = tk.Button(window, text = "Kick", bg=config.bgcolor, fg=config.fgcolor, command=lambda: kickparty(buyer, window)).grid(row=1, column=5)
+    btn1 = tk.Button(Tab, text="Invite", bg=config.bgcolor, fg=config.fgcolor,
+                     command=lambda: sendinvite(buyer)).grid(row=2, column=0)
+    btn6 = tk.Button(Tab, text="Busy", bg=config.bgcolor, fg=config.fgcolor, command=lambda: sendbusy(buyer)).grid(
+        row=2, column=1)
+    btn5 = tk.Button(Tab, text="Find Item", bg=config.bgcolor, fg=config.fgcolor,
+                     command=lambda: finditem(windowtext)).grid(row=2, column=2)
+    btn2 = tk.Button(Tab, text="Trade", bg=config.bgcolor, fg=config.fgcolor, command=lambda: sendtrade(buyer)).grid(
+        row=2, column=3)
+    btn4 = tk.Button(Tab, text="Ty", bg=config.bgcolor, fg=config.fgcolor, command=lambda: sendty(buyer)).grid(row=2,
+                                                                                                                  column=4)
+    btn3 = tk.Button(Tab, text="Kick", bg=config.bgcolor, fg=config.fgcolor,
+                     command=lambda: kickparty(buyer, window, tasktabs)).grid(row=2, column=5)
+
+
+
+
+def tradewindow():
+    global window
+    global tasktabs
+
+    window = tk.Tk()
+    window.title("Trade")
+    window.configure(background=config.bgcolor)
+    tasktabs = ttk.Notebook(window)
 
     window.call('wm', 'attributes', '.', '-topmost', '1')
 #    window.after(0, readclient())
+    addtabtrade(window, tasktabs)
     window.mainloop()
 
 

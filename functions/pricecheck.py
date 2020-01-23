@@ -427,8 +427,8 @@ def searchnewrare(mod, value):
     x = 0
     parameters["query"]["stats"][0]["filters"].clear()
     for k in mod:
-        print(mod[x].get())
-        print(value[x].get())
+        #print(mod[x].get())
+        #print(value[x].get())
 
         if mod[x].get() in modlist.mods:
             for y in range(0, len(modlist.mods[mod[x].get()])):
@@ -446,7 +446,7 @@ def searchnewrare(mod, value):
 
 def buildpricewindow():
     global MessFrame
-    jprint(parameters)
+    #jprint(parameters)
     response = requests.post("https://www.pathofexile.com/api/trade/search/Metamorph", json=parameters)
     #jprint(response.json())
     query = response.json()["id"]

@@ -1,13 +1,22 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-#
 
-from functions.tradeget import *
 from functions.pricecheck import *
 from functions.keyfunctions import *
+import sys
+print(sys.platform)
+if sys.platform != "linux":
+    from look import *
 import functions.config as config
 import functions.menu as menu
+import functions.tradeget as tradeget
 import threading
 import fileinput
+
+
+if sys.platform != "linux":
+    ttray = threading.Thread(target=traycreate)
+    ttray.start()
 
 smtray = threading.Thread(target=menu.createmainmenu)
 smtray.start()
@@ -85,11 +94,14 @@ while True:
         ding = open(config.clienttxt, 'r', encoding='UTF8')
         last_line = ding.readlines()[-1]
         ding.close()
-        if league in last_line and "@From" in last_line:
-            t18 = threading.Thread(target=tradewindow)
-            t18.start()
-        if league in last_line and "@To" in last_line:
-            t18 = threading.Thread(target=outgoinwindow)
+        if tradeget.league in last_line and "@From" in last_line:
+            try:
+                tradeget.addtabtrade(tradeget.window, tradeget.tasktabs)
+            except:
+                t18 = threading.Thread(target=tradeget.tradewindow)
+                t18.start()
+        if tradeget.league in last_line and "@To" in last_line:
+            t18 = threading.Thread(target=tradeget.outgoinwindow)
             t18.start()
         if "Redeemer" in last_line and config.redeemer < 3:
             config.redeemer = config.redeemer + 1

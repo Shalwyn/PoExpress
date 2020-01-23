@@ -24,7 +24,6 @@ else:
 from tkinter.colorchooser import askcolor
 
 
-global e
 
 
 def jprint(obj):
@@ -225,6 +224,7 @@ def createmainmenu():
     global act2
     global act3
     global act4
+    global e
 
     menuwindow = tk.Tk()
     menuwindow.title("Poe Tools")
