@@ -12,7 +12,6 @@ If no Results found on Rare Items - you can switch with one Button to the Trade 
 
 Future Functions
 * Div Card Calculator
-* Incoming Trades in Tabs
 
 -----------
 Commands:
