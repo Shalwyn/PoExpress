@@ -1,7 +1,12 @@
 import keyboard
 import re
-import functions.config as config
 import sys
+import configparser
+import os
+
+config = configparser.ConfigParser()
+config.read('{}\config.ini'.format(os.getcwd()))
+
 if sys.platform == "linux":
     from pynput.keyboard import Key, KeyCode, Listener, Controller
 
@@ -43,7 +48,11 @@ if sys.platform == "linux":
             listener.join()
 else:
     def alts():
-        config.statsearch = 1
+        config['FILES']['statsearch'] = str(1)
+        filetosave = '{}\config.ini'.format(os.getcwd())
+        with open(filetosave, 'w') as configfile:
+            config.write(configfile)
+
         keyboard.press_and_release("ctrl+c")
 
     def watch_keyboard():

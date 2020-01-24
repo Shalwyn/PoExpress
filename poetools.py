@@ -12,11 +12,9 @@ from tkinter import filedialog
 import psutil
 import PySimpleGUIQt as sg
 import fileinput
+import configparser
 
 menu_def = ['BLANK', 'E&xit']
-
-tray = sg.SystemTray(menu=menu_def, filename=r'icon.png')
-
 
 import functions.menu as menu
 #trayth = threading.Thread(target=icon.run())
@@ -27,6 +25,8 @@ smtray.start()
 
 keyth = threading.Thread(target=watch_keyboard)
 keyth.start()
+
+
 
 #trayth = threading.Thread(target=traycreate)
 #trayth.start()
@@ -39,95 +39,110 @@ root.withdraw()
 DEBUG = False
 i = 0
 
-if config.clienttxt == '':
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+if config['FILES']['clienttxt'] == '':
     clientwindow = Tk()
     clientwindow.filename = filedialog.askopenfilename(initialdir="/", title="Please choose your Client.txt",
                                                        filetypes=(("Text", "*.txt"), ("all files", "*.*")))
-    for line in fileinput.input("functions/config.py", inplace=1):
-        if "clienttxt" in line:
-            line = line.replace(line, "clienttxt = '{}'\n".format(clientwindow.filename))
-        sys.stdout.write(line)
+    config['FILES']['clienttxt'] = clientwindow.filename
+    with open('config.ini', 'w') as configfile:
+        config.write(configfile)
     clientwindow.destroy()
 
     clientwindow.mainloop()
 
-originalTime = os.path.getmtime(config.clienttxt)
+originalTime = os.path.getmtime(config['FILES']['clienttxt'])
+
+def traymake():
+    tray = sg.SystemTray(menu=menu_def, filename=r'icon.png')
+    while True:
+        menu_item = tray.Read()
+        if menu_item == 'Exit':
+            if sys.platform == "linux":
+                PROCNAME = "python"
+                for proc in psutil.process_iter():
+                    # check whether the process name matches
+                    if proc.name() == PROCNAME:
+                        proc.kill()
+            else:
+                PROCNAME = "poetools.exe"
+
+                for proc in psutil.process_iter():
+                    # check whether the process name matches
+                    if proc.name() == PROCNAME:
+                        proc.kill()
+
+
+trayth = threading.Thread(target=traymake)
+trayth.start()
 
 while True:
-    menu_item = tray.Read()
-    if menu_item == 'Exit':
-        if sys.platform == "linux":
-            PROCNAME = "python"
-            for proc in psutil.process_iter():
-                # check whether the process name matches
-                if proc.name() == PROCNAME:
-                    proc.kill()
-        else:
-            PROCNAME = "python.exe"
-
-            for proc in psutil.process_iter():
-                # check whether the process name matches
-                if proc.name() == PROCNAME:
-                    proc.kill()
-
-
+    config.read('config.ini')
     try:
         data = root.clipboard_get()
     except (TclError, UnicodeDecodeError):  # ignore non-text clipboard contents
         continue
 
     splitdata = data.splitlines()
-    if "Rarity: Unique" in data and config.statsearch == 0:
+    print(config['FILES'].getint('statsearch'))
+    if "Rarity: Unique" in data and config['FILES'].getint('statsearch') == 0:
         if data != prev:
+            print("stat 0")
             prev = data
             buildunique(data)
-            t9 = threading.Thread(target=buildpricewindow)
-            t9.start()
+            t80 = threading.Thread(target=buildpricewindow)
+            t80.start()
 
-    elif "Rarity: Unique" in data and config.statsearch == 1:
+    elif "Rarity: Unique" in data and config['FILES'].getint('statsearch') == 1:
         if data != prevst:
+            print("stat 2")
             prevst = data
             prev = data
             builduniquestat(data)
-            t9 = threading.Thread(target=buildpricewindow)
-            t9.start()
-            config.statsearch = 0
-            print("statsearch = 0")
+            t81 = threading.Thread(target=buildpricewindow)
+            t81.start()
+            config['FILES']['statsearch'] = str(0)
+            with open('config.ini', 'w') as configfile:
+                config.write(configfile)
+
 
     elif "Map Tier:" in data and "Rarity: Rare" in data or "Rarity: Normal" in data or "Rarity: Magic" in data:
         if data != prev:
             prev = data
             buildmap(data)
-            t9 = threading.Thread(target=buildpricewindow)
-            t9.start()
+            t82 = threading.Thread(target=buildpricewindow)
+            t82.start()
 
     elif "Rarity: Currency" in data or "Rarity: Divination Card" in data:
         if data != prev:
             prev = data
             buildcurrency(data)
-            t9 = threading.Thread(target=buildpricewindow)
-            t9.start()
+            t83 = threading.Thread(target=buildpricewindow)
+            t83.start()
 
     elif "Rarity: Gem" in data:
 
         if data != prev:
             prev = data
             buildgem(data)
-            t9 = threading.Thread(target=buildpricewindow)
-            t9.start()
+            t84 = threading.Thread(target=buildpricewindow)
+            t84.start()
 
     elif "Rarity: Rare" in data and splitdata[3] == "--------":
         if data != prev:
             prev = data
             buildrareitem(data)
-            t9 = threading.Thread(target=buildpricewindow)
-            t9.start()
+            t85 = threading.Thread(target=buildpricewindow)
+            t85.start()
 
     time.sleep(0.5)
 
-    if os.path.getmtime(config.clienttxt) > originalTime:
-        ding = open(config.clienttxt, 'r', encoding='UTF8')
+    if os.path.getmtime(config['FILES']['clienttxt']) > originalTime:
+        ding = open(config['FILES']['clienttxt'], 'r', encoding='UTF8')
         last_line = ding.readlines()[-1]
+
         ding.close()
         if tradeget.league in last_line and "@From" in last_line:
             try:
@@ -138,34 +153,35 @@ while True:
         if tradeget.league in last_line and "@To" in last_line:
             t18 = threading.Thread(target=tradeget.outgoinwindow)
             t18.start()
-        if "Redeemer" in last_line and config.redeemer < 3:
-            config.redeemer = config.redeemer + 1
-            for line in fileinput.input("functions/config.py", inplace=1):
-                if "redeemer" in line:
-                    line = line.replace(line, "redeemer = {}\n".format(config.redeemer))
-                sys.stdout.write(line)
-            menu.act1.config(text=config.redeemer)
-        if "Crusader" in last_line and config.crusader < 3:
-            config.crusader = config.crusader + 1
-            for line in fileinput.input("functions/config.py", inplace=1):
-                if "crusader" in line:
-                    line = line.replace(line, "crusader = {}\n".format(config.crusader))
-                sys.stdout.write(line)
-            menu.act2.config(text=config.crusader)
-        if "Warlord" in last_line and config.warlord < 3:
-            config.warlord = config.warlord + 1
-            for line in fileinput.input("functions/config.py", inplace=1):
-                if "warlord" in line:
-                    line = line.replace(line, "warlord = {}\n".format(config.warlord))
-                sys.stdout.write(line)
-            menu.act3.config(text=config.warlord)
-        if "Hunter" in last_line and config.hunter < 3:
-            config.hunter = config.hunter + 1
-            for line in fileinput.input("functions/config.py", inplace=1):
-                if "hunter" in line:
-                    line = line.replace(line, "hunter = {}\n".format(config.hunter))
-                sys.stdout.write(line)
-            menu.act4.config(text=config.hunter)
+        if "Redeemer" in last_line and config['awakener'].getint('redeemer') < 3:
+            newwrite = config['awakener'].getint('redeemer') + 1
+            config.set('awakener', 'redeemer', str(newwrite))
+            with open('config.ini', 'w') as configfile:
+                config.write(configfile)
+            menu.act1.config(text=config['awakener'].getint('redeemer'))
+
+        if "Crusader" in last_line and config['awakener'].getint('crusader') < 3:
+            newwrite = config['awakener'].getint('crusader') + 1
+            config.set('awakener', 'crusader', str(newwrite))
+            with open('config.ini', 'w') as configfile:
+                config.write(configfile)
+            menu.act2.config(text=config['awakener'].getint('crusader'))
+
+        if "Warlord" in last_line and config['awakener'].getint('warlord') < 3:
+            newwrite = config['awakener'].getint('warlord') + 1
+            config.set('awakener', 'warlord', str(newwrite))
+            with open('config.ini', 'w') as configfile:
+                config.write(configfile)
+            menu.act3.config(text=config['awakener'].getint('warlord'))
+
+        if "Hunter" in last_line and config['awakener'].getint('hunter') < 3:
+            newwrite = config['awakener'].getint('hunter') + 1
+            config.set('awakener', 'hunter', str(newwrite))
+            with open('config.ini', 'w') as configfile:
+                config.write(configfile)
+            menu.act4.config(text=config['awakener'].getint('hunter'))
             # menu.act1.configure(text=config.redeemer)
 
-        originalTime = os.path.getmtime(config.clienttxt)
+        originalTime = os.path.getmtime(config['FILES']['clienttxt'])
+
+

@@ -10,8 +10,12 @@ import threading
 import functions.modlist as modlist
 import functions.config as config
 import webbrowser
+import configparser
+import os
 
-
+config = configparser.ConfigParser()
+config.read('{}\config.ini'.format(os.getcwd()))
+global MessFrame
 def jprint(obj):
     # create a formatted string of the Python JSON object
     text = json.dumps(obj, sort_keys=True, indent=4)
@@ -445,7 +449,7 @@ def searchnewrare(mod, value):
     buildpricewindow()
 
 def buildpricewindow():
-    global MessFrame
+
     #jprint(parameters)
     response = requests.post("https://www.pathofexile.com/api/trade/search/Metamorph", json=parameters)
     #jprint(response.json())
@@ -465,10 +469,10 @@ def buildpricewindow():
         #jprint(result)
 
         MessFrame = tkinter.Tk()
-        MessFrame.configure(background=config.bgcolor)
+        MessFrame.configure(background=config['colors']['bgcolor'])
         MessFrame.geometry('300x200+200+200')
         MessFrame.title(name)
-        T = tkinter.Text(MessFrame, height=10, width=60, fg=config.fgcolor, bg=config.bgcolor)
+        T = tkinter.Text(MessFrame, height=10, width=60, fg=config['colors']['fgcolor'], bg=config['colors']['bgcolor'])
         T.pack()
         B = tkinter.Button(MessFrame, text ="Close")
         B.pack()
@@ -487,6 +491,7 @@ def buildpricewindow():
 
         MessFrame.call('wm', 'attributes', '.', '-topmost', '1')
         MessFrame.mainloop()
+
     else:
         e = {}
         ev = {}
@@ -495,21 +500,21 @@ def buildpricewindow():
         query = response.json()["id"]
 
         MessFrame = tkinter.Tk()
-        MessFrame.configure(background=config.bgcolor)
+        MessFrame.configure(background=config['colors']['bgcolor'])
         MessFrame.geometry('400x300+200+200')
-        w = tkinter.Label(MessFrame, text="No result's Found", fg=config.textcolor, bg=config.bgcolor).grid(row=0, column=0, columnspan=2)
+        w = tkinter.Label(MessFrame, text="No result's Found", fg=config['colors']['textcolor'], bg=config['colors']['bgcolor']).grid(row=0, column=0, columnspan=2)
         x = 0
         for k in mod:
-            e[x] = tkinter.Entry(MessFrame, width=40, fg=config.fgcolor, bg=config.bgcolor)
+            e[x] = tkinter.Entry(MessFrame, width=40, fg=config['colors']['fgcolor'], bg=config['colors']['bgcolor'])
             e[x].insert(0, mod[x])
             e[x].grid(row=x+1, column=0)
-            ev[x] = tkinter.Entry(MessFrame, width=5, fg=config.fgcolor, bg=config.bgcolor)
+            ev[x] = tkinter.Entry(MessFrame, width=5, fg=config['colors']['fgcolor'], bg=config['colors']['bgcolor'])
             ev[x].insert(0, value[x])
             ev[x].grid(row=x+1, column=1)
             x = x + 1
-        btn1 = tkinter.Button(MessFrame, text="Search Again", bg=config.bgcolor, fg=config.fgcolor,
+        btn1 = tkinter.Button(MessFrame, text="Search Again", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
                               command=lambda: searchnewrare(e, ev)).grid(row=x+1, column=0)
-        btn2 = tkinter.Button(MessFrame, text="Search on Web", bg=config.bgcolor, fg=config.fgcolor,
+        btn2 = tkinter.Button(MessFrame, text="Search on Web", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
                               command=lambda: searchweb(query)).grid(row=x+2, column=0)
         MessFrame.call('wm', 'attributes', '.', '-topmost', '1')
         MessFrame.mainloop()
