@@ -21,6 +21,12 @@ if sys.platform == "linux":
 else:
     import pygetwindow as gw
 import sys
+import configparser
+import os
+
+config = configparser.ConfigParser()
+config.read('{}\config.ini'.format(os.getcwd()))
+
 league = "Metamorph"
 
 def hideout(seller):
@@ -184,7 +190,7 @@ def sendty(nicktotrade):
     keyboard.release(Key.enter)
     keyboard.type(u'\u0040')
     time.sleep(0.1)
-    keyboard.type("{} {}".format(nicktotrade, config.tytrade))
+    keyboard.type("{} {}".format(nicktotrade, config['FILES']['tytrade']))
     time.sleep(0.1)
     keyboard.press(Key.enter)
     keyboard.release(Key.enter)
@@ -257,9 +263,8 @@ def addtabtrade(window, tasktabs):
 
     dateTimeObj = datetime.now()
     now = dateTimeObj.strftime("%H:%M:%S")
-    sound = config.soundfile
-
-    clientding = open(config.clienttxt, 'r', encoding='UTF8')
+    sound = config['FILES']['soundfile']
+    clientding = open(config['FILES']['clienttxt'], 'r', encoding='UTF8')
     last_line = clientding.readlines()[-1]
     clientding.close()
     splitmsg = last_line.split()
@@ -267,7 +272,7 @@ def addtabtrade(window, tasktabs):
         buyer = splitmsg[splitmsg.index("wtb") - 1]
         del splitmsg[0:splitmsg.index("wtb")]
         buyer = buyer[:-1]
-        playsound(sound)
+        playsound("{}".format(sound))
     if 'Hi,' in splitmsg and "@From" in splitmsg:
         buyer = splitmsg[splitmsg.index("Hi,") - 1]
         del splitmsg[0:splitmsg.index("Hi,")]
@@ -275,7 +280,7 @@ def addtabtrade(window, tasktabs):
         item = splitmsg[splitmsg.index("your") + 1:splitmsg.index("listed")]
         price = splitmsg[splitmsg.index("for") + 1:splitmsg.index("for") + 3]
         stash = splitmsg[splitmsg.index(league) + 1:splitmsg.index(league) + 11]
-        playsound(sound)
+        playsound("{}".format(sound))
 
     windowtext = " ".join(item)
     windowprice = " ".join(price)
@@ -286,24 +291,23 @@ def addtabtrade(window, tasktabs):
 
     tasktabs.add(Tab, text=buyer)
     tasktabs.grid(row=0, column=0, sticky="W")
-    T = tk.Text(Tab, height=10, width=60, fg=config.textcolor, bg=config.bgcolor)
+    T = tk.Text(Tab, height=10, width=60, fg=config['colors']['textcolor'], bg=config['colors']['bgcolor'])
     T.grid(row=1, column=0, columnspan=6, sticky="nsew")
-    T.insert(tk.END, "Nick: {} \n".format(buyer))
     T.insert(tk.END, "Item: {} \n".format(windowtext))
     T.insert(tk.END, "Price: {} \n".format(windowprice))
     T.insert(tk.END, "{} \n".format(windowstash))
     T.insert(tk.END, "{} \n".format(now))
-    btn1 = tk.Button(Tab, text="Invite", bg=config.bgcolor, fg=config.fgcolor,
+    btn1 = tk.Button(Tab, text="Invite", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
                      command=lambda: sendinvite(buyer)).grid(row=2, column=0)
-    btn6 = tk.Button(Tab, text="Busy", bg=config.bgcolor, fg=config.fgcolor, command=lambda: sendbusy(buyer)).grid(
+    btn6 = tk.Button(Tab, text="Busy", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'], command=lambda: sendbusy(buyer)).grid(
         row=2, column=1)
-    btn5 = tk.Button(Tab, text="Find Item", bg=config.bgcolor, fg=config.fgcolor,
+    btn5 = tk.Button(Tab, text="Find Item", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
                      command=lambda: finditem(windowtext)).grid(row=2, column=2)
-    btn2 = tk.Button(Tab, text="Trade", bg=config.bgcolor, fg=config.fgcolor, command=lambda: sendtrade(buyer)).grid(
+    btn2 = tk.Button(Tab, text="Trade", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'], command=lambda: sendtrade(buyer)).grid(
         row=2, column=3)
-    btn4 = tk.Button(Tab, text="Ty", bg=config.bgcolor, fg=config.fgcolor, command=lambda: sendty(buyer)).grid(row=2,
+    btn4 = tk.Button(Tab, text="Ty", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'], command=lambda: sendty(buyer)).grid(row=2,
                                                                                                                   column=4)
-    btn3 = tk.Button(Tab, text="Kick", bg=config.bgcolor, fg=config.fgcolor,
+    btn3 = tk.Button(Tab, text="Kick", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
                      command=lambda: kickparty(buyer, window, tasktabs)).grid(row=2, column=5)
 
 
@@ -315,7 +319,7 @@ def tradewindow():
 
     window = tk.Tk()
     window.title("Trade")
-    window.configure(background=config.bgcolor)
+    window.configure(background=config['colors']['bgcolor'])
     tasktabs = ttk.Notebook(window)
 
     window.call('wm', 'attributes', '.', '-topmost', '1')
@@ -325,7 +329,7 @@ def tradewindow():
 
 
 def outgoinwindow():
-    clientding = open(config.clienttxt, 'r', encoding='UTF8')
+    clientding = open(config['FILES']['clienttxt'], 'r', encoding='UTF8')
     last_line = clientding.readlines()[-1]
     clientding.close()
     splitmsg = last_line.split()
@@ -348,18 +352,18 @@ def outgoinwindow():
     now = dateTimeObj.strftime("%H:%M:%S")
     window = tk.Tk()
     window.title("Trade")
-    window.configure(background=config.fgcolor)
+    window.configure(background=config['colors']['fgcolor'])
     windowtext = " ".join(item)
     windowprice = " ".join(price)
     windowstash = " ".join(stash)
-    T = tk.Text(window, height=10, width=60, fg=config.textcolor, bg=config.bgcolor)
+    T = tk.Text(window, height=10, width=60, fg=config['colors']['textcolor'], bg=config['colors']['bgcolor'])
     T.grid(row=0, column=0, columnspan=3,  sticky="nsew")
     T.insert(tk.END, "Nick: {} \n".format(seller))
     T.insert(tk.END, "Item: {} \n".format(windowtext))
     T.insert(tk.END, "Price: {} \n".format(windowprice))
     T.insert(tk.END, "{} \n".format(now))
-    btn1 = tk.Button(window, text = "Visit Hideout", bg=config.bgcolor, fg=config.fgcolor, command=lambda: hideout(seller)).grid(row=1, column=0)
-    btn2 = tk.Button(window, text = "Ty", bg=config.bgcolor, fg=config.fgcolor, command=lambda: sendty(seller)).grid(row=1, column=1)
+    btn1 = tk.Button(window, text = "Visit Hideout", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'], command=lambda: hideout(seller)).grid(row=1, column=0)
+    btn2 = tk.Button(window, text = "Ty", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'], command=lambda: sendty(seller)).grid(row=1, column=1)
 
     window.call('wm', 'attributes', '.', '-topmost', '1')
 #    window.after(0, readclient())
