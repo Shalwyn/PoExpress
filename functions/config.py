@@ -1,11 +1,12 @@
 statsearch = 0
-clienttxt = '/home/tora/windows/Program Files (x86)/Steam/steamapps/common/Path of Exile/logs/Client.txt'
-soundfile = '/home/tora/windows/Users/Shalw/github/PoeTools/Bell.wav'
+clienttxt = ''
+soundfile = ''
 tytrade = 'Ty and have a nice day Exile'
 bgcolor = '#000000'
 fgcolor = '#ff00ff'
 textcolor = '#ff0000'
 redeemer = 0
 crusader = 0
-warlord = 1
+warlord = 0
 hunter = 0
+

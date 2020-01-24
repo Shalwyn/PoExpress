@@ -132,7 +132,7 @@ def setclienttxt():
                                                        filetypes=(("Text", "*.txt"), ("all files", "*.*")))
     for line in fileinput.input("functions/config.py", inplace=1):
         if "clienttxt" in line:
-            line = line.replace(line, "clienttxt = '{}'".format(clientwindow.filename))
+            line = line.replace(line, "clienttxt = '{}'\n".format(clientwindow.filename))
         sys.stdout.write(line)
     clientwindow.destroy()
 
@@ -145,7 +145,7 @@ def setsound():
         ("Wave", "*.wav"), ("Mp3", "*.mp3"), ("all files", "*.*")))
     for line in fileinput.input("functions/config.py", inplace=1):
         if "soundfile" in line:
-            line = line.replace(line, "soundfile = '{}'".format(soundwindow.filename))
+            line = line.replace(line, "soundfile = '{}'\n".format(soundwindow.filename))
         sys.stdout.write(line)
     soundwindow.destroy()
 
@@ -155,7 +155,7 @@ def setsound():
 def setty(tytext):
     for line in fileinput.input("functions/config.py", inplace=1):
         if "tytrade" in line:
-            line = line.replace(line, "tytrade = '{}'".format(tytext))
+            line = line.replace(line, "tytrade = '{}'\n".format(tytext))
         sys.stdout.write(line)
 
 

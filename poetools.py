@@ -8,9 +8,10 @@ import functions.config as config
 import functions.menu as menu
 import functions.tradeget as tradeget
 import threading
-import fileinput
+from tkinter import filedialog
 import psutil
 import PySimpleGUIQt as sg
+import fileinput
 
 menu_def = ['BLANK', 'E&xit']
 
@@ -37,6 +38,18 @@ root.update()
 root.withdraw()
 DEBUG = False
 i = 0
+
+if config.clienttxt == '':
+    clientwindow = Tk()
+    clientwindow.filename = filedialog.askopenfilename(initialdir="/", title="Please choose your Client.txt",
+                                                       filetypes=(("Text", "*.txt"), ("all files", "*.*")))
+    for line in fileinput.input("functions/config.py", inplace=1):
+        if "clienttxt" in line:
+            line = line.replace(line, "clienttxt = '{}'\n".format(clientwindow.filename))
+        sys.stdout.write(line)
+    clientwindow.destroy()
+
+    clientwindow.mainloop()
 
 originalTime = os.path.getmtime(config.clienttxt)
 
