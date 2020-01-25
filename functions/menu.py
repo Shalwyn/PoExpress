@@ -27,7 +27,10 @@ from tkinter.colorchooser import askcolor
 import configparser
 
 config = configparser.ConfigParser()
-config.read('{}\config.ini'.format(os.getcwd()))
+if sys.platform == "linux":
+    config.read('{}/config.ini'.format(os.getcwd()))
+else:
+    config.read('{}\config.ini'.format(os.getcwd()))
 
 def jprint(obj):
     # create a formatted string of the Python JSON object
@@ -133,9 +136,14 @@ def setclienttxt():
     clientwindow = tk.Tk()
     clientwindow.filename = filedialog.askopenfilename(initialdir="/", title="Select file",
                                                        filetypes=(("Text", "*.txt"), ("all files", "*.*")))
-    config['FILES']['clienttxt'] = clientwindow.filename
     config = configparser.ConfigParser()
-    filetosave = '{}\config.ini'.format(os.getcwd())
+    config['FILES']['clienttxt'] = clientwindow.filename
+
+    if sys.platform == "linux":
+        filetosave = '{}/config.ini'.format(os.getcwd())
+    else:
+        filetosave = '{}\config.ini'.format(os.getcwd())
+
     with open(filetosave, 'w') as configfile:
 
         config.write(configfile)
@@ -149,7 +157,10 @@ def setsound():
     soundwindow.filename = filedialog.askopenfilename(initialdir="/", title="Select file", filetypes=(
         ("Wave", "*.wav"), ("Mp3", "*.mp3"), ("all files", "*.*")))
     config['FILES']['soundfile'] = soundwindow.filename
-    filetosave = '{}\config.ini'.format(os.getcwd())
+    if sys.platform == "linux":
+        filetosave = '{}/config.ini'.format(os.getcwd())
+    else:
+        filetosave = '{}\config.ini'.format(os.getcwd())
     with open(filetosave, 'w') as configfile:
         config.write(configfile)
     soundwindow.destroy()
@@ -159,7 +170,10 @@ def setsound():
 
 def setty(tytext):
     config['FILES']['tytrade'] = tytext
-    filetosave = '{}\config.ini'.format(os.getcwd())
+    if sys.platform == "linux":
+        filetosave = '{}/config.ini'.format(os.getcwd())
+    else:
+        filetosave = '{}\config.ini'.format(os.getcwd())
     with open(filetosave, 'w') as configfile:
         config.write(configfile)
 
@@ -173,20 +187,29 @@ def stcolor(which, entry):
     (triple, hexstr) = askcolor()
     if which == "fgcolor":
         config['colors']['fgcolor'] = hexstr
-        filetosave = '{}\config.ini'.format(os.getcwd())
+        if sys.platform == "linux":
+            filetosave = '{}/config.ini'.format(os.getcwd())
+        else:
+            filetosave = '{}\config.ini'.format(os.getcwd())
         with open(filetosave, 'w') as configfile:
             config.write(configfile)
 
     elif which == "bgcolor":
         config['colors']['bgcolor'] = hexstr
-        filetosave = '{}\config.ini'.format(os.getcwd())
+        if sys.platform == "linux":
+            filetosave = '{}/config.ini'.format(os.getcwd())
+        else:
+            filetosave = '{}\config.ini'.format(os.getcwd())
         with open(filetosave, 'w') as configfile:
             config.write(configfile)
 
 
     elif which == "textcolor":
         config['colors']['textcolor'] = hexstr
-        filetosave = '{}\config.ini'.format(os.getcwd())
+        if sys.platform == "linux":
+            filetosave = '{}/config.ini'.format(os.getcwd())
+        else:
+            filetosave = '{}\config.ini'.format(os.getcwd())
         with open(filetosave, 'w') as configfile:
             config.write(configfile)
 
@@ -197,25 +220,37 @@ def stcolor(which, entry):
 def resetcount(awakener):
     if awakener == "redeemer":
         config['awakener']['redeemer'] = str(0)
-        filetosave = '{}\config.ini'.format(os.getcwd())
+        if sys.platform == "linux":
+            filetosave = '{}/config.ini'.format(os.getcwd())
+        else:
+            filetosave = '{}\config.ini'.format(os.getcwd())
         with open(filetosave, 'w') as configfile:
             config.write(configfile)
         act1.config(text=config['awakener']['redeemer'])
     if awakener == "crusader":
         config['awakener']['crusader'] = str(0)
-        filetosave = '{}\config.ini'.format(os.getcwd())
+        if sys.platform == "linux":
+            filetosave = '{}/config.ini'.format(os.getcwd())
+        else:
+            filetosave = '{}\config.ini'.format(os.getcwd())
         with open(filetosave, 'w') as configfile:
             config.write(configfile)
         act2.config(text=config['awakener']['crusader'])
     if awakener == "warlord":
         config['awakener']['warlord'] = str(0)
-        filetosave = '{}\config.ini'.format(os.getcwd())
+        if sys.platform == "linux":
+            filetosave = '{}/config.ini'.format(os.getcwd())
+        else:
+            filetosave = '{}\config.ini'.format(os.getcwd())
         with open(filetosave, 'w') as configfile:
             config.write(configfile)
         act3.config(text=config['awakener']['warlord'])
     if awakener == "hunter":
         config['awakener']['hunter'] = str(0)
-        filetosave = '{}\config.ini'.format(os.getcwd())
+        if sys.platform == "linux":
+            filetosave = '{}/config.ini'.format(os.getcwd())
+        else:
+            filetosave = '{}\config.ini'.format(os.getcwd())
         with open(filetosave, 'w') as configfile:
             config.write(configfile)
         act4.config(text=config['awakener']['hunter'])

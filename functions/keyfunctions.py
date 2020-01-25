@@ -5,8 +5,10 @@ import configparser
 import os
 
 config = configparser.ConfigParser()
-config.read('{}\config.ini'.format(os.getcwd()))
-
+if sys.platform == "linux":
+    config.read('{}/config.ini'.format(os.getcwd()))
+else:
+    config.read('{}\config.ini'.format(os.getcwd()))
 if sys.platform == "linux":
     from pynput.keyboard import Key, KeyCode, Listener, Controller
 
@@ -49,7 +51,10 @@ if sys.platform == "linux":
 else:
     def alts():
         config['FILES']['statsearch'] = str(1)
-        filetosave = '{}\config.ini'.format(os.getcwd())
+        if sys.platform == "linux":
+            filetosave = '{}/config.ini'.format(os.getcwd())
+        else:
+            filetosave = '{}\config.ini'.format(os.getcwd())
         with open(filetosave, 'w') as configfile:
             config.write(configfile)
 

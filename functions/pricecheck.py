@@ -12,10 +12,15 @@ import functions.config as config
 import webbrowser
 import configparser
 import os
+import sys
 
 config = configparser.ConfigParser()
-config.read('{}\config.ini'.format(os.getcwd()))
+if sys.platform == "linux":
+    config.read('{}/config.ini'.format(os.getcwd()))
+else:
+    config.read('{}\config.ini'.format(os.getcwd()))
 global MessFrame
+
 def jprint(obj):
     # create a formatted string of the Python JSON object
     text = json.dumps(obj, sort_keys=True, indent=4)
@@ -427,7 +432,7 @@ def buildgem(itemparse):
 def searchweb(query):
     webbrowser.open("https://www.pathofexile.com/trade/search/Metamorph/"+ query)
 
-def searchnewrare(mod, value):
+def searchnewrare(mod, value, MessFrame):
     x = 0
     parameters["query"]["stats"][0]["filters"].clear()
     for k in mod:
@@ -513,7 +518,7 @@ def buildpricewindow():
             ev[x].grid(row=x+1, column=1)
             x = x + 1
         btn1 = tkinter.Button(MessFrame, text="Search Again", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
-                              command=lambda: searchnewrare(e, ev)).grid(row=x+1, column=0)
+                              command=lambda: searchnewrare(e, ev, MessFrame)).grid(row=x+1, column=0)
         btn2 = tkinter.Button(MessFrame, text="Search on Web", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
                               command=lambda: searchweb(query)).grid(row=x+2, column=0)
         MessFrame.call('wm', 'attributes', '.', '-topmost', '1')

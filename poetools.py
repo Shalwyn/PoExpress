@@ -41,17 +41,32 @@ i = 0
 
 config = configparser.ConfigParser()
 config.read('config.ini')
+def checkclienttxt():
+    if config['FILES']['clienttxt'] == '':
+        clientwindow = Tk()
+        clientwindow.filename = filedialog.askopenfilename(initialdir="/", title="Please choose your Client.txt",
+                                                           filetypes=(("Text", "*.txt"), ("all files", "*.*")))
+        config['FILES']['clienttxt'] = clientwindow.filename
+        with open('config.ini', 'w') as configfile:
+            config.write(configfile)
+        clientwindow.destroy()
 
-if config['FILES']['clienttxt'] == '':
-    clientwindow = Tk()
-    clientwindow.filename = filedialog.askopenfilename(initialdir="/", title="Please choose your Client.txt",
-                                                       filetypes=(("Text", "*.txt"), ("all files", "*.*")))
-    config['FILES']['clienttxt'] = clientwindow.filename
-    with open('config.ini', 'w') as configfile:
-        config.write(configfile)
-    clientwindow.destroy()
+        clientwindow.mainloop()
 
-    clientwindow.mainloop()
+    try:
+        open(config['FILES']['clienttxt'] , "r")
+    except IOError:
+        clientwindow = Tk()
+        clientwindow.filename = filedialog.askopenfilename(initialdir="/", title="Please choose your Client.txt",
+                                                           filetypes=(("Text", "*.txt"), ("all files", "*.*")))
+        config['FILES']['clienttxt'] = clientwindow.filename
+        with open('config.ini', 'w') as configfile:
+            config.write(configfile)
+        clientwindow.destroy()
+
+        clientwindow.mainloop()
+
+checkclienttxt()
 
 originalTime = os.path.getmtime(config['FILES']['clienttxt'])
 
@@ -86,10 +101,8 @@ while True:
         continue
 
     splitdata = data.splitlines()
-    print(config['FILES'].getint('statsearch'))
     if "Rarity: Unique" in data and config['FILES'].getint('statsearch') == 0:
         if data != prev:
-            print("stat 0")
             prev = data
             buildunique(data)
             t80 = threading.Thread(target=buildpricewindow)
@@ -97,7 +110,6 @@ while True:
 
     elif "Rarity: Unique" in data and config['FILES'].getint('statsearch') == 1:
         if data != prevst:
-            print("stat 2")
             prevst = data
             prev = data
             builduniquestat(data)
