@@ -40,7 +40,10 @@ if sys.platform == "linux":
             keyboard.type("\n/hideout\n")
 
         if Key.f6 in current_keys:
-            config.statsearch = 1
+            filetosave = '{}/config.ini'.format(os.getcwd())
+            config['FILES']['statsearch'] = str(1)
+            with open(filetosave, 'w') as configfile:
+                config.write(configfile)
             current_keys.remove(key)
 
 

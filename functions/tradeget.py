@@ -23,6 +23,7 @@ else:
 import sys
 import configparser
 import os
+import subprocess
 
 config = configparser.ConfigParser()
 if sys.platform == "linux":
@@ -34,16 +35,7 @@ league = "Metamorph"
 
 def hideout(seller):
     if sys.platform == "linux":
-        titlePattern = re.compile("Path of Exile")
-
-        Gtk.init([])  # necessary if not using a Gtk.main() loop
-        screen = Wnck.Screen.get_default()
-        screen.force_update()  # recommended per Wnck documentation
-
-        window_list = screen.get_windows()
-        for w in window_list:
-            if titlePattern.match(w.get_name()):
-                w.activate(0)
+        subprocess.Popen("wmctrl -a Path of Exile", stdout=subprocess.PIPE, shell=True)
     else:
         regex = "Path of Exile"
         notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
@@ -70,16 +62,7 @@ def hideout(seller):
 
 def sendinvite(nicktoinvite):
     if sys.platform == "linux":
-        titlePattern = re.compile("Path of Exile")
-
-        Gtk.init([])  # necessary if not using a Gtk.main() loop
-        screen = Wnck.Screen.get_default()
-        screen.force_update()  # recommended per Wnck documentation
-
-        window_list = screen.get_windows()
-        for w in window_list:
-            if titlePattern.match(w.get_name()):
-                w.activate(0)
+        subprocess.Popen("wmctrl -a Path of Exile", stdout=subprocess.PIPE, shell=True)
     else:
         regex = "Path of Exile"
         notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
@@ -106,16 +89,7 @@ def sendinvite(nicktoinvite):
 
 def finditem(itemtosearch):
     if sys.platform == "linux":
-        titlePattern = re.compile("Path of Exile")
-
-        Gtk.init([])  # necessary if not using a Gtk.main() loop
-        screen = Wnck.Screen.get_default()
-        screen.force_update()  # recommended per Wnck documentation
-
-        window_list = screen.get_windows()
-        for w in window_list:
-            if titlePattern.match(w.get_name()):
-                w.activate(0)
+        subprocess.Popen("wmctrl -a Path of Exile", stdout=subprocess.PIPE, shell=True)
     else:
         regex = "Path of Exile"
         notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
@@ -135,16 +109,7 @@ def finditem(itemtosearch):
 
 def sendtrade(nicktotrade):
     if sys.platform == "linux":
-        titlePattern = re.compile("Path of Exile")
-
-        Gtk.init([])  # necessary if not using a Gtk.main() loop
-        screen = Wnck.Screen.get_default()
-        screen.force_update()  # recommended per Wnck documentation
-
-        window_list = screen.get_windows()
-        for w in window_list:
-            if titlePattern.match(w.get_name()):
-                w.activate(0)
+        subprocess.Popen("wmctrl -a Path of Exile", stdout=subprocess.PIPE, shell=True)
     else:
         regex = "Path of Exile"
         notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
@@ -171,16 +136,7 @@ def sendtrade(nicktotrade):
 
 def sendty(nicktotrade):
     if sys.platform == "linux":
-        titlePattern = re.compile("Path of Exile")
-
-        Gtk.init([])  # necessary if not using a Gtk.main() loop
-        screen = Wnck.Screen.get_default()
-        screen.force_update()  # recommended per Wnck documentation
-
-        window_list = screen.get_windows()
-        for w in window_list:
-            if titlePattern.match(w.get_name()):
-                w.activate(0)
+        subprocess.Popen("wmctrl -a Path of Exile", stdout=subprocess.PIPE, shell=True)
     else:
         regex = "Path of Exile"
         notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
@@ -200,16 +156,7 @@ def sendty(nicktotrade):
 
 def sendbusy(nicktotrade):
     if sys.platform == "linux":
-        titlePattern = re.compile("Path of Exile")
-
-        Gtk.init([])  # necessary if not using a Gtk.main() loop
-        screen = Wnck.Screen.get_default()
-        screen.force_update()  # recommended per Wnck documentation
-
-        window_list = screen.get_windows()
-        for w in window_list:
-            if titlePattern.match(w.get_name()):
-                w.activate(0)
+        subprocess.Popen("wmctrl -a Path of Exile", stdout=subprocess.PIPE, shell=True)
     else:
         regex = "Path of Exile"
         notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
@@ -229,16 +176,7 @@ def sendbusy(nicktotrade):
 
 def sendsold(nicktotrade, item):
     if sys.platform == "linux":
-        titlePattern = re.compile("Path of Exile")
-
-        Gtk.init([])  # necessary if not using a Gtk.main() loop
-        screen = Wnck.Screen.get_default()
-        screen.force_update()  # recommended per Wnck documentation
-
-        window_list = screen.get_windows()
-        for w in window_list:
-            if titlePattern.match(w.get_name()):
-                w.activate(0)
+        subprocess.Popen("wmctrl -a Path of Exile", stdout=subprocess.PIPE, shell=True)
     else:
         regex = "Path of Exile"
         notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
@@ -259,16 +197,7 @@ def sendsold(nicktotrade, item):
 
 def kickparty(nicktokick, window, tasktabs):
     if sys.platform == "linux":
-        titlePattern = re.compile("Path of Exile")
-
-        Gtk.init([])  # necessary if not using a Gtk.main() loop
-        screen = Wnck.Screen.get_default()
-        screen.force_update()  # recommended per Wnck documentation
-
-        window_list = screen.get_windows()
-        for w in window_list:
-            if titlePattern.match(w.get_name()):
-                w.activate(0)
+        subprocess.Popen("wmctrl -a Path of Exile", stdout=subprocess.PIPE, shell=True)
     else:
         regex = "Path of Exile"
         notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
@@ -280,7 +209,15 @@ def kickparty(nicktokick, window, tasktabs):
     keyboard.press(Key.enter)
     keyboard.release(Key.enter)
     time.sleep(0.1)
-    keyboard.type("/kick {}".format(nicktokick))
+    keyboard.press(Key.shift_l)
+    time.sleep(0.1)
+    keyboard.press('7')
+    time.sleep(0.1)
+    keyboard.release('7')
+    time.sleep(0.1)
+    keyboard.release(Key.shift_l)
+    (0.1)
+    keyboard.type("kick {}".format(nicktokick))
     time.sleep(0.1)
     keyboard.press(Key.enter)
     keyboard.release(Key.enter)
@@ -328,8 +265,8 @@ def addtabtrade(window, tasktabs):
     T.insert(tk.END, "Price: {} \n".format(windowprice))
     T.insert(tk.END, "{} \n".format(windowstash))
     T.insert(tk.END, "{} \n".format(now))
-    btn0 = tk.Button(Tab, text="Sold", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
-                     command=lambda: sendsold(buyer, item)).grid(row=2, column=0)
+    #btn0 = tk.Button(Tab, text="Sold", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
+    #                 command=lambda: sendsold(buyer, item)).grid(row=2, column=0)
     btn1 = tk.Button(Tab, text="Invite", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
                      command=lambda: sendinvite(buyer)).grid(row=2, column=1)
     btn6 = tk.Button(Tab, text="Busy", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'], command=lambda: sendbusy(buyer)).grid(

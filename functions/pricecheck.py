@@ -458,72 +458,74 @@ def buildpricewindow():
     #jprint(parameters)
     response = requests.post("https://www.pathofexile.com/api/trade/search/Metamorph", json=parameters)
     #jprint(response.json())
-    query = response.json()["id"]
-    result = response.json()["result"][:10]
-    #result = re.sub('[!@#$]', '', result)
-    result = json.dumps(result)
-    result = result.replace('[', '')
-    result = result.replace(']', '')
-    result = result.replace('"', '')
-    result = result.replace(' ', '')
+    try:
+        if response.json()["total"] > 0:
+            query = response.json()["id"]
+            result = response.json()["result"][:10]
+            #result = re.sub('[!@#$]', '', result)
+            result = json.dumps(result)
+            result = result.replace('[', '')
+            result = result.replace(']', '')
+            result = result.replace('"', '')
+            result = result.replace(' ', '')
 
-    #print("https://www.pathofexile.com/api/trade/fetch/{}?query={}".format(result, query))
-    if response.json()["total"] > 0:
-        response = requests.get("https://www.pathofexile.com/api/trade/fetch/{}?query={}".format(result, query))
-        result = response.json()["result"]
-        #jprint(result)
+        #print("https://www.pathofexile.com/api/trade/fetch/{}?query={}".format(result, query))
 
-        MessFrame = tkinter.Tk()
-        MessFrame.configure(background=config['colors']['bgcolor'])
-        MessFrame.geometry('300x200+200+200')
-        MessFrame.title(name)
-        T = tkinter.Text(MessFrame, height=10, width=60, fg=config['colors']['fgcolor'], bg=config['colors']['bgcolor'])
-        T.pack()
-        B = tkinter.Button(MessFrame, text ="Close")
-        B.pack()
+            response = requests.get("https://www.pathofexile.com/api/trade/fetch/{}?query={}".format(result, query))
+            result = response.json()["result"]
+            #jprint(result)
+
+            MessFrame = tkinter.Tk()
+            MessFrame.configure(background=config['colors']['bgcolor'])
+            MessFrame.geometry('300x200+200+200')
+            MessFrame.title(name)
+            T = tkinter.Text(MessFrame, height=10, width=60, fg=config['colors']['fgcolor'], bg=config['colors']['bgcolor'])
+            T.pack()
+            B = tkinter.Button(MessFrame, text ="Close")
+            B.pack()
 
 
-        for d in result:
+            for d in result:
 
-            if d['listing']['price'] != None:
-              amount = d['listing']['price']['amount']
-              currency = d['listing']['price']['currency']
-              if 'corrupted' in d['item']:
-                corrupt = d['item']['corrupted']
-                T.insert(tkinter.END, "price {} {} Corrupted\n".format(amount, currency))
-              else:
-                T.insert(tkinter.END, "price {} {}\n".format(amount, currency))
+                if d['listing']['price'] != None:
+                  amount = d['listing']['price']['amount']
+                  currency = d['listing']['price']['currency']
+                  if 'corrupted' in d['item']:
+                    corrupt = d['item']['corrupted']
+                    T.insert(tkinter.END, "price {} {} Corrupted\n".format(amount, currency))
+                  else:
+                    T.insert(tkinter.END, "price {} {}\n".format(amount, currency))
 
-        MessFrame.call('wm', 'attributes', '.', '-topmost', '1')
-        MessFrame.mainloop()
+            MessFrame.call('wm', 'attributes', '.', '-topmost', '1')
+            MessFrame.mainloop()
+        else:
+            e = {}
+            ev = {}
 
-    else:
-        e = {}
-        ev = {}
+            response = requests.post("https://www.pathofexile.com/api/trade/search/Metamorph", json=parameters)
+            query = response.json()["id"]
 
-        response = requests.post("https://www.pathofexile.com/api/trade/search/Metamorph", json=parameters)
-        query = response.json()["id"]
-
-        MessFrame = tkinter.Tk()
-        MessFrame.configure(background=config['colors']['bgcolor'])
-        MessFrame.geometry('400x300+200+200')
-        w = tkinter.Label(MessFrame, text="No result's Found", fg=config['colors']['textcolor'], bg=config['colors']['bgcolor']).grid(row=0, column=0, columnspan=2)
-        x = 0
-        for k in mod:
-            e[x] = tkinter.Entry(MessFrame, width=40, fg=config['colors']['fgcolor'], bg=config['colors']['bgcolor'])
-            e[x].insert(0, mod[x])
-            e[x].grid(row=x+1, column=0)
-            ev[x] = tkinter.Entry(MessFrame, width=5, fg=config['colors']['fgcolor'], bg=config['colors']['bgcolor'])
-            ev[x].insert(0, value[x])
-            ev[x].grid(row=x+1, column=1)
-            x = x + 1
-        btn1 = tkinter.Button(MessFrame, text="Search Again", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
-                              command=lambda: searchnewrare(e, ev, MessFrame)).grid(row=x+1, column=0)
-        btn2 = tkinter.Button(MessFrame, text="Search on Web", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
-                              command=lambda: searchweb(query)).grid(row=x+2, column=0)
-        MessFrame.call('wm', 'attributes', '.', '-topmost', '1')
-        MessFrame.mainloop()
-
+            MessFrame = tkinter.Tk()
+            MessFrame.configure(background=config['colors']['bgcolor'])
+            MessFrame.geometry('400x300+200+200')
+            w = tkinter.Label(MessFrame, text="No result's Found", fg=config['colors']['textcolor'], bg=config['colors']['bgcolor']).grid(row=0, column=0, columnspan=2)
+            x = 0
+            for k in mod:
+                e[x] = tkinter.Entry(MessFrame, width=40, fg=config['colors']['fgcolor'], bg=config['colors']['bgcolor'])
+                e[x].insert(0, mod[x])
+                e[x].grid(row=x+1, column=0)
+                ev[x] = tkinter.Entry(MessFrame, width=5, fg=config['colors']['fgcolor'], bg=config['colors']['bgcolor'])
+                ev[x].insert(0, value[x])
+                ev[x].grid(row=x+1, column=1)
+                x = x + 1
+            btn1 = tkinter.Button(MessFrame, text="Search Again", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
+                                  command=lambda: searchnewrare(e, ev, MessFrame)).grid(row=x+1, column=0)
+            btn2 = tkinter.Button(MessFrame, text="Search on Web", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
+                                  command=lambda: searchweb(query)).grid(row=x+2, column=0)
+            MessFrame.call('wm', 'attributes', '.', '-topmost', '1')
+            MessFrame.mainloop()
+    except:
+        print("No Response")
 
 
 
