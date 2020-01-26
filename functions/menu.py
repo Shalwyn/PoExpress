@@ -76,7 +76,8 @@ def searchwindowset():
             self.auto_clear = auto_clear
 
             tk.Toplevel.__init__(self)
-            self.overrideredirect(True)
+            #self.overrideredirect(True)
+            self.wm_attributes('-topmost', '1')
 
             self.message_label = tk.Label(self, compound='left', text=self.message, bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'])
             self.message_label.pack()
@@ -126,6 +127,7 @@ def searchwindowset():
 
     name = parameters['query']['name']
     response = requests.post("https://www.pathofexile.com/api/trade/search/Metamorph", json=parameters)
+
     try:
 
         query = response.json()["id"]

@@ -286,10 +286,9 @@ def addtabtrade(window, tasktabs, lastlinesold, lastlinesnew):
 
 
 
-def tradewindow(lastlinesold, lastlinesnew):
+def tradewindow(lastlinesold="", lastlinesnew=""):
     global window
     global tasktabs
-
     window = tk.Tk()
     window.title("Trade")
     window.configure(background=config['colors']['bgcolor'])
