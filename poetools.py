@@ -7,6 +7,8 @@ import sys
 import functions.config as config
 import functions.tradeget as tradeget
 import threading
+import time
+
 from tkinter import filedialog
 import psutil
 import PySimpleGUIQt as sg
@@ -75,7 +77,6 @@ def traymake():
                     # check whether the process name matches
                     if proc.name() == PROCNAME:
                         proc.kill()
-
 
 trayth = threading.Thread(target=traymake)
 trayth.start()
@@ -150,7 +151,6 @@ while True:
             buildnormal(data)
             t84 = threading.Thread(target=buildpricewindow)
             t84.start()
-
 
     time.sleep(0.5)
 
