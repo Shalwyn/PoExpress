@@ -155,7 +155,7 @@ while True:
             t84.start()
 
     time.sleep(0.5)
-    print(os.path.getmtime(config['FILES']['clienttxt']), originalTime)
+
     if os.path.getmtime(config['FILES']['clienttxt']) > originalTime:
         config = configparser.ConfigParser()
         if sys.platform == "linux":
@@ -164,15 +164,15 @@ while True:
             config.read('{}\config.ini'.format(os.getcwd()))
         ding = open(config['FILES']['clienttxt'], 'r', encoding='UTF8')
         lastlinesnew = sum(1 for line in ding)
-        
+
         while lastlinesold < lastlinesnew:
             last_line = open(config['FILES']['clienttxt'], 'r', encoding='UTF8').readlines()[lastlinesold]
 
             if tradeget.league in last_line and "@From" in last_line:
                 try:
-                    tradeget.addtabtrade(tradeget.window, tradeget.tasktabs, lastlinesold, lastlinesnew)
+                    tradeget.addtabtrade(tradeget.window, tradeget.tasktabs, last_line)
                 except:
-                    t18 = threading.Thread(target=tradeget.tradewindow, kwargs={'lastlinesold': lastlinesold, 'lastlinesnew': lastlinesnew})
+                    t18 = threading.Thread(target=tradeget.tradewindow, kwargs={'line': last_line})
                     t18.start()
 
 
