@@ -330,6 +330,26 @@ def buildcurrency(itemparse):
     }
     name = parameters['query']['type']
 
+def buildnormal(itemparse):
+    global parameters
+    global name
+    parameters = {
+        "query": {
+            "status": {
+                "option": "online"
+            },
+            "term": itemparse.splitlines()[1],
+            "stats": [{
+                "type": "and",
+                "filters": []
+            }]
+        },
+        "sort": {
+            "price": "asc"
+        }
+    }
+    name = parameters['query']['term']
+
 def buildmap(itemparse):
     global parameters
     global name
@@ -481,7 +501,7 @@ def buildpricewindow():
             MessFrame.title(name)
             T = tkinter.Text(MessFrame, height=10, width=60, fg=config['colors']['fgcolor'], bg=config['colors']['bgcolor'])
             T.pack()
-            B = tkinter.Button(MessFrame, text ="Close")
+            B = tkinter.Button(MessFrame, text ="Close", command=lambda: MessFrame.destroy())
             B.pack()
 
 
@@ -525,7 +545,13 @@ def buildpricewindow():
             MessFrame.call('wm', 'attributes', '.', '-topmost', '1')
             MessFrame.mainloop()
     except:
-        print("No Response")
+        MessFrame = tkinter.Tk()
+        MessFrame.configure(background=config['colors']['bgcolor'])
+        MessFrame.geometry('150x50+200+200')
+        MessFrame.title("Pricecheck")
+        w = tkinter.Label(MessFrame, text="No result's Found", fg=config['colors']['textcolor'], bg=config['colors']['bgcolor']).grid(row=0, column=0, columnspan=2)
+        MessFrame.call('wm', 'attributes', '.', '-topmost', '1')
+        MessFrame.mainloop()
 
 
 

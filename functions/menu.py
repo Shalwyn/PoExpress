@@ -5,9 +5,7 @@ import re
 import json
 import requests
 import functions.config as config
-import fileinput
 import threading
-import sys
 from pynput.keyboard import Key, Controller
 
 import webbrowser
@@ -262,7 +260,6 @@ def createmainmenu():
     global act3
     global act4
     global e
-
 
     menuwindow = tk.Tk()
     menuwindow.title("Poe Tools")

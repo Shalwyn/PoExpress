@@ -5,31 +5,21 @@ from functions.pricecheck import *
 from functions.keyfunctions import *
 import sys
 import functions.config as config
-import functions.menu as menu
 import functions.tradeget as tradeget
 import threading
 from tkinter import filedialog
 import psutil
 import PySimpleGUIQt as sg
-import fileinput
 import configparser
+import functions.menu as menu
 
 menu_def = ['BLANK', 'E&xit']
-
-import functions.menu as menu
-#trayth = threading.Thread(target=icon.run())
-#trayth.start()
 
 smtray = threading.Thread(target=menu.createmainmenu)
 smtray.start()
 
 keyth = threading.Thread(target=watch_keyboard)
 keyth.start()
-
-
-
-#trayth = threading.Thread(target=traycreate)
-#trayth.start()
 
 prev = ""
 prevst = ""
@@ -40,19 +30,14 @@ DEBUG = False
 i = 0
 
 config = configparser.ConfigParser()
+if sys.platform == "linux":
+    config.read('{}/config.ini'.format(os.getcwd()))
+else:
+    config.read('{}\config.ini'.format(os.getcwd()))
 config.read('config.ini')
+
+
 def checkclienttxt():
-    if config['FILES']['clienttxt'] == '':
-        clientwindow = Tk()
-        clientwindow.filename = filedialog.askopenfilename(initialdir="/", title="Please choose your Client.txt",
-                                                           filetypes=(("Text", "*.txt"), ("all files", "*.*")))
-        config['FILES']['clienttxt'] = clientwindow.filename
-        with open('config.ini', 'w') as configfile:
-            config.write(configfile)
-        clientwindow.destroy()
-
-        clientwindow.mainloop()
-
     try:
         open(config['FILES']['clienttxt'] , "r")
     except IOError:
@@ -66,9 +51,11 @@ def checkclienttxt():
 
         clientwindow.mainloop()
 
+
 checkclienttxt()
 
 originalTime = os.path.getmtime(config['FILES']['clienttxt'])
+
 
 def traymake():
     tray = sg.SystemTray(menu=menu_def, filename=r'icon.png')
@@ -89,9 +76,9 @@ def traymake():
                     if proc.name() == PROCNAME:
                         proc.kill()
 
-if sys.platform is not "linux":
-    trayth = threading.Thread(target=traymake)
-    trayth.start()
+
+trayth = threading.Thread(target=traymake)
+trayth.start()
 
 lastlinesold = sum(1 for line in open(config['FILES']['clienttxt']))
 
@@ -118,13 +105,17 @@ while True:
             builduniquestat(data)
             t81 = threading.Thread(target=buildpricewindow)
             t81.start()
-            config.read('config.ini')
+            config = configparser.ConfigParser()
+            if sys.platform == "linux":
+                config.read('{}/config.ini'.format(os.getcwd()))
+            else:
+                config.read('{}\config.ini'.format(os.getcwd()))
             config['FILES']['statsearch'] = str(0)
             with open('config.ini', 'w') as configfile:
                 config.write(configfile)
 
 
-    elif "Map Tier:" in data and "Rarity: Rare" in data or "Rarity: Normal" in data or "Rarity: Magic" in data:
+    elif "Map Tier:" in data and ("Rarity: Rare" in data or "Rarity: Normal" in data or "Rarity: Magic" in data):
         if data != prev:
             prev = data
             buildmap(data)
@@ -153,10 +144,22 @@ while True:
             t85 = threading.Thread(target=buildpricewindow)
             t85.start()
 
+    elif "Rarity: Normal" in data:
+        if data != prev:
+            prev = data
+            buildnormal(data)
+            t84 = threading.Thread(target=buildpricewindow)
+            t84.start()
+
+
     time.sleep(0.5)
 
     if os.path.getmtime(config['FILES']['clienttxt']) > originalTime:
-        config.read('config.ini')
+        config = configparser.ConfigParser()
+        if sys.platform == "linux":
+            config.read('{}/config.ini'.format(os.getcwd()))
+        else:
+            config.read('{}\config.ini'.format(os.getcwd()))
         ding = open(config['FILES']['clienttxt'], 'r', encoding='UTF8')
         lastlinesnew = sum(1 for line in ding)
 
