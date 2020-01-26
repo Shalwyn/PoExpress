@@ -36,7 +36,7 @@ if sys.platform == "linux":
     config.read('{}/config.ini'.format(os.getcwd()))
 else:
     config.read('{}\config.ini'.format(os.getcwd()))
-config.read('config.ini')
+
 
 
 def checkclienttxt():
@@ -57,7 +57,6 @@ def checkclienttxt():
 checkclienttxt()
 
 originalTime = os.path.getmtime(config['FILES']['clienttxt'])
-
 
 def traymake():
     tray = sg.SystemTray(menu=menu_def, filename=r'icon.png')
@@ -81,7 +80,7 @@ def traymake():
 trayth = threading.Thread(target=traymake)
 trayth.start()
 
-lastlinesold = sum(1 for line in open(config['FILES']['clienttxt']))
+lastlinesold = sum(1 for line in open(config['FILES']['clienttxt'], 'r', encoding='UTF8'))
 
 while True:
 
@@ -162,15 +161,14 @@ while True:
             config.read('{}\config.ini'.format(os.getcwd()))
         ding = open(config['FILES']['clienttxt'], 'r', encoding='UTF8')
         lastlinesnew = sum(1 for line in ding)
-
         while lastlinesold < lastlinesnew:
-
             last_line = open(config['FILES']['clienttxt'], 'r', encoding='UTF8').readlines()[lastlinesold]
+
             if tradeget.league in last_line and "@From" in last_line:
                 try:
-                    tradeget.addtabtrade(tradeget.window, tradeget.tasktabs)
+                    tradeget.addtabtrade(tradeget.window, tradeget.tasktabs, lastlinesold, lastlinesnew)
                 except:
-                    t18 = threading.Thread(target=tradeget.tradewindow)
+                    t18 = threading.Thread(target=tradeget.tradewindow(lastlinesold, lastlinesnew))
                     t18.start()
             if tradeget.league in last_line and "@To" in last_line:
                 t18 = threading.Thread(target=tradeget.outgoinwindow)
@@ -204,5 +202,6 @@ while True:
                 menu.act4.config(text=config['awakener'].getint('hunter'))
                 # menu.act1.configure(text=config.redeemer)
             lastlinesold = lastlinesold + 1
+            time.sleep(2)
         ding.close()
         originalTime = os.path.getmtime(config['FILES']['clienttxt'])

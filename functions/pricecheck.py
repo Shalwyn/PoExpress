@@ -491,7 +491,8 @@ def buildpricewindow():
                 self.wm_attributes('-topmost', '1')
                 #self.call('wm', 'attributes', '.', '-topmost', '1')
             else:
-                self.overrideredirect(True)
+                self.wm_attributes('-topmost', '1')
+                #self.overrideredirect(True)
 
             self.message_label = tk.Label(self, compound='left', text=self.message, bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'])
             self.message_label.pack()
