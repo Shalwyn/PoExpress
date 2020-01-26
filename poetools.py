@@ -5,31 +5,23 @@ from functions.pricecheck import *
 from functions.keyfunctions import *
 import sys
 import functions.config as config
-import functions.menu as menu
 import functions.tradeget as tradeget
 import threading
+import time
+
 from tkinter import filedialog
 import psutil
 import PySimpleGUIQt as sg
-import fileinput
 import configparser
+import functions.menu as menu
 
 menu_def = ['BLANK', 'E&xit']
-
-import functions.menu as menu
-#trayth = threading.Thread(target=icon.run())
-#trayth.start()
 
 smtray = threading.Thread(target=menu.createmainmenu)
 smtray.start()
 
 keyth = threading.Thread(target=watch_keyboard)
 keyth.start()
-
-
-
-#trayth = threading.Thread(target=traycreate)
-#trayth.start()
 
 prev = ""
 prevst = ""
@@ -40,20 +32,32 @@ DEBUG = False
 i = 0
 
 config = configparser.ConfigParser()
+if sys.platform == "linux":
+    config.read('{}/config.ini'.format(os.getcwd()))
+else:
+    config.read('{}\config.ini'.format(os.getcwd()))
 config.read('config.ini')
 
-if config['FILES']['clienttxt'] == '':
-    clientwindow = Tk()
-    clientwindow.filename = filedialog.askopenfilename(initialdir="/", title="Please choose your Client.txt",
-                                                       filetypes=(("Text", "*.txt"), ("all files", "*.*")))
-    config['FILES']['clienttxt'] = clientwindow.filename
-    with open('config.ini', 'w') as configfile:
-        config.write(configfile)
-    clientwindow.destroy()
 
-    clientwindow.mainloop()
+def checkclienttxt():
+    try:
+        open(config['FILES']['clienttxt'] , "r")
+    except IOError:
+        clientwindow = Tk()
+        clientwindow.filename = filedialog.askopenfilename(initialdir="/", title="Please choose your Client.txt",
+                                                           filetypes=(("Text", "*.txt"), ("all files", "*.*")))
+        config['FILES']['clienttxt'] = clientwindow.filename
+        with open('config.ini', 'w') as configfile:
+            config.write(configfile)
+        clientwindow.destroy()
+
+        clientwindow.mainloop()
+
+
+checkclienttxt()
 
 originalTime = os.path.getmtime(config['FILES']['clienttxt'])
+
 
 def traymake():
     tray = sg.SystemTray(menu=menu_def, filename=r'icon.png')
@@ -74,41 +78,45 @@ def traymake():
                     if proc.name() == PROCNAME:
                         proc.kill()
 
-
 trayth = threading.Thread(target=traymake)
 trayth.start()
 
+lastlinesold = sum(1 for line in open(config['FILES']['clienttxt']))
+
 while True:
-    config.read('config.ini')
+
     try:
         data = root.clipboard_get()
     except (TclError, UnicodeDecodeError):  # ignore non-text clipboard contents
         continue
 
     splitdata = data.splitlines()
-    print(config['FILES'].getint('statsearch'))
     if "Rarity: Unique" in data and config['FILES'].getint('statsearch') == 0:
         if data != prev:
-            print("stat 0")
             prev = data
             buildunique(data)
             t80 = threading.Thread(target=buildpricewindow)
             t80.start()
 
     elif "Rarity: Unique" in data and config['FILES'].getint('statsearch') == 1:
+
         if data != prevst:
-            print("stat 2")
             prevst = data
             prev = data
             builduniquestat(data)
             t81 = threading.Thread(target=buildpricewindow)
             t81.start()
+            config = configparser.ConfigParser()
+            if sys.platform == "linux":
+                config.read('{}/config.ini'.format(os.getcwd()))
+            else:
+                config.read('{}\config.ini'.format(os.getcwd()))
             config['FILES']['statsearch'] = str(0)
             with open('config.ini', 'w') as configfile:
                 config.write(configfile)
 
 
-    elif "Map Tier:" in data and "Rarity: Rare" in data or "Rarity: Normal" in data or "Rarity: Magic" in data:
+    elif "Map Tier:" in data and ("Rarity: Rare" in data or "Rarity: Normal" in data or "Rarity: Magic" in data):
         if data != prev:
             prev = data
             buildmap(data)
@@ -137,51 +145,64 @@ while True:
             t85 = threading.Thread(target=buildpricewindow)
             t85.start()
 
+    elif "Rarity: Normal" in data:
+        if data != prev:
+            prev = data
+            buildnormal(data)
+            t84 = threading.Thread(target=buildpricewindow)
+            t84.start()
+
     time.sleep(0.5)
 
     if os.path.getmtime(config['FILES']['clienttxt']) > originalTime:
+        config = configparser.ConfigParser()
+        if sys.platform == "linux":
+            config.read('{}/config.ini'.format(os.getcwd()))
+        else:
+            config.read('{}\config.ini'.format(os.getcwd()))
         ding = open(config['FILES']['clienttxt'], 'r', encoding='UTF8')
-        last_line = ding.readlines()[-1]
+        lastlinesnew = sum(1 for line in ding)
 
-        ding.close()
-        if tradeget.league in last_line and "@From" in last_line:
-            try:
-                tradeget.addtabtrade(tradeget.window, tradeget.tasktabs)
-            except:
-                t18 = threading.Thread(target=tradeget.tradewindow)
+        while lastlinesold < lastlinesnew:
+
+            last_line = open(config['FILES']['clienttxt'], 'r', encoding='UTF8').readlines()[lastlinesold]
+            if tradeget.league in last_line and "@From" in last_line:
+                try:
+                    tradeget.addtabtrade(tradeget.window, tradeget.tasktabs)
+                except:
+                    t18 = threading.Thread(target=tradeget.tradewindow)
+                    t18.start()
+            if tradeget.league in last_line and "@To" in last_line:
+                t18 = threading.Thread(target=tradeget.outgoinwindow)
                 t18.start()
-        if tradeget.league in last_line and "@To" in last_line:
-            t18 = threading.Thread(target=tradeget.outgoinwindow)
-            t18.start()
-        if "Redeemer" in last_line and config['awakener'].getint('redeemer') < 3:
-            newwrite = config['awakener'].getint('redeemer') + 1
-            config.set('awakener', 'redeemer', str(newwrite))
-            with open('config.ini', 'w') as configfile:
-                config.write(configfile)
-            menu.act1.config(text=config['awakener'].getint('redeemer'))
+            if "Redeemer" in last_line and config['awakener'].getint('redeemer') < 3:
+                newwrite = config['awakener'].getint('redeemer') + 1
+                config.set('awakener', 'redeemer', str(newwrite))
+                with open('config.ini', 'w') as configfile:
+                    config.write(configfile)
+                menu.act1.config(text=config['awakener'].getint('redeemer'))
 
-        if "Crusader" in last_line and config['awakener'].getint('crusader') < 3:
-            newwrite = config['awakener'].getint('crusader') + 1
-            config.set('awakener', 'crusader', str(newwrite))
-            with open('config.ini', 'w') as configfile:
-                config.write(configfile)
-            menu.act2.config(text=config['awakener'].getint('crusader'))
+            if "Crusader" in last_line and config['awakener'].getint('crusader') < 3:
+                newwrite = config['awakener'].getint('crusader') + 1
+                config.set('awakener', 'crusader', str(newwrite))
+                with open('config.ini', 'w') as configfile:
+                    config.write(configfile)
+                menu.act2.config(text=config['awakener'].getint('crusader'))
 
-        if "Warlord" in last_line and config['awakener'].getint('warlord') < 3:
-            newwrite = config['awakener'].getint('warlord') + 1
-            config.set('awakener', 'warlord', str(newwrite))
-            with open('config.ini', 'w') as configfile:
-                config.write(configfile)
-            menu.act3.config(text=config['awakener'].getint('warlord'))
+            if "Warlord" in last_line and config['awakener'].getint('warlord') < 3:
+                newwrite = config['awakener'].getint('warlord') + 1
+                config.set('awakener', 'warlord', str(newwrite))
+                with open('config.ini', 'w') as configfile:
+                    config.write(configfile)
+                menu.act3.config(text=config['awakener'].getint('warlord'))
 
-        if "Hunter" in last_line and config['awakener'].getint('hunter') < 3:
-            newwrite = config['awakener'].getint('hunter') + 1
-            config.set('awakener', 'hunter', str(newwrite))
-            with open('config.ini', 'w') as configfile:
-                config.write(configfile)
-            menu.act4.config(text=config['awakener'].getint('hunter'))
-            # menu.act1.configure(text=config.redeemer)
-
+            if "Hunter" in last_line and config['awakener'].getint('hunter') < 3:
+                newwrite = config['awakener'].getint('hunter') + 1
+                config.set('awakener', 'hunter', str(newwrite))
+                with open('config.ini', 'w') as configfile:
+                    config.write(configfile)
+                menu.act4.config(text=config['awakener'].getint('hunter'))
+                # menu.act1.configure(text=config.redeemer)
+            lastlinesold = lastlinesold + 1
+        ding.close()
         originalTime = os.path.getmtime(config['FILES']['clienttxt'])
-
-

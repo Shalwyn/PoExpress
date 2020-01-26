@@ -5,9 +5,7 @@ import re
 import json
 import requests
 import functions.config as config
-import fileinput
 import threading
-import sys
 from pynput.keyboard import Key, Controller
 
 import webbrowser
@@ -27,7 +25,10 @@ from tkinter.colorchooser import askcolor
 import configparser
 
 config = configparser.ConfigParser()
-config.read('{}\config.ini'.format(os.getcwd()))
+if sys.platform == "linux":
+    config.read('{}/config.ini'.format(os.getcwd()))
+else:
+    config.read('{}\config.ini'.format(os.getcwd()))
 
 def jprint(obj):
     # create a formatted string of the Python JSON object
@@ -59,7 +60,50 @@ def buyitem(whisper):
     keyboard.release(Key.enter)
 
 
+
 def searchwindowset():
+    class MyToolTip(tk.Toplevel):
+
+        TIP_X_OFFSET = 8
+        TIP_Y_OFFSET = 8
+        AUTO_CLEAR_TIME = 1000 # Millisek. (1 sek.)
+
+        def __init__(self, xpos, ypos, message="my tooltip", auto_clear=False):
+
+            self.xpos = xpos
+            self.ypos = ypos
+            self.message = message
+            self.auto_clear = auto_clear
+
+            tk.Toplevel.__init__(self)
+            self.overrideredirect(True)
+
+            self.message_label = tk.Label(self, compound='left', text=self.message, bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'])
+            self.message_label.pack()
+
+            self.geometry("+%d+%d" % (self.xpos+self.TIP_X_OFFSET,
+                self.ypos+self.TIP_X_OFFSET))
+
+            if self.auto_clear:
+                self.after(self.AUTO_CLEAR_TIME, self.clear_tip)
+
+        def clear_tip(self):
+            """Entferne den Tool-Tip"""
+
+            self.destroy()
+
+    def entry_mouse_enter(event, value):
+        """Die Maus bewegt sich ins Entry-Widget"""
+        printvalue = '\n'.join(value)
+        buy_frame.my_tool_tip = MyToolTip(event.x_root, event.y_root,
+            printvalue)
+
+    def entry_mouse_leave(event):
+        """Die Maus bewegt sich aus dem Entry-Widget"""
+
+        #~~ Entferne den Tool-Tip
+        buy_frame.my_tool_tip.destroy()
+
     global parameters
     global name
     item = e.get()
@@ -82,60 +126,83 @@ def searchwindowset():
 
     name = parameters['query']['name']
     response = requests.post("https://www.pathofexile.com/api/trade/search/Metamorph", json=parameters)
-    query = response.json()["id"]
-    result = response.json()["result"][:10]
-    result = json.dumps(result)
-    result = result.replace('[', '')
-    result = result.replace(']', '')
-    result = result.replace('"', '')
-    result = result.replace(' ', '')
+    try:
 
-    response = requests.get("https://www.pathofexile.com/api/trade/fetch/{}?query={}".format(result, query))
-    result = response.json()["result"]
+        query = response.json()["id"]
+        result = response.json()["result"][:10]
+        result = json.dumps(result)
+        result = result.replace('[', '')
+        result = result.replace(']', '')
+        result = result.replace('"', '')
+        result = result.replace(' ', '')
 
-    buy_frame = Tk()
-    buy_frame.configure(background=config['colors']['bgcolor'])
-    buy_frame.geometry('400x300+200+200')
-    buy_frame.title(name)
+        response = requests.get("https://www.pathofexile.com/api/trade/fetch/{}?query={}".format(result, query))
+        result = response.json()["result"]
+        buy_frame = Tk()
+        buy_frame.configure(background=config['colors']['bgcolor'])
+        buy_frame.geometry('400x300+200+200')
+        buy_frame.title(name)
 
-    r = 0
-    wr = {}
-    br = {}
-    for d in result:
-        if d['listing']['price'] is not None:
-            amount = d['listing']['price']['amount']
-            currency = d['listing']['price']['currency']
-            nick = d['listing']['account']['lastCharacterName']
-            whisper = d['listing']['whisper']
-            if 'corrupted' in d['item']:
-                corrupt = d['item']['corrupted']
+        r = 0
+        wr = {}
+        br = {}
+        for d in result:
+            if d['listing']['price'] is not None:
+                amount = d['listing']['price']['amount']
+                currency = d['listing']['price']['currency']
+                nick = d['listing']['account']['lastCharacterName']
+                whisper = d['listing']['whisper']
+                mods = d['item']['explicitMods']
+                if 'corrupted' in d['item']:
+                    corrupt = d['item']['corrupted']
 
-                wr[r] = tk.Label(buy_frame, text="price {} {} Corrupt - {}".format(amount, currency, nick),
-                                 fg=config['colors']['textcolor'], bg=config['colors']['bgcolor']).grid(row=r)
-                br[r] = tk.Button(buy_frame, text="Buy", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
-                                  command=lambda whisper=whisper: buyitem(whisper)).grid(row=r, column=1)
+                    wr[r] = tk.Label(buy_frame, text="price {} {} Corrupt - {}".format(amount, currency, nick),
+                                     fg=config['colors']['textcolor'], bg=config['colors']['bgcolor'])
+                    wr[r].grid(row=r)
+                    br[r] = tk.Button(buy_frame, text="Buy", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
+                                      command=lambda whisper=whisper: buyitem(whisper)).grid(row=r, column=1)
+                    wr[r].bind('<Enter>', lambda event, mods=mods: entry_mouse_enter(event, mods))
+                    wr[r].bind('<Leave>', entry_mouse_leave)
 
-            else:
-                wr[r] = tk.Label(buy_frame, text="price {} {} - {}".format(amount, currency, nick), fg=config['colors']['textcolor'],
-                                 bg=config['colors']['bgcolor']).grid(row=r)
-                br[r] = tk.Button(buy_frame, text="Buy", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
-                                  command=lambda whisper=whisper: buyitem(whisper)).grid(row=r, column=1)
 
-            r = r + 1
-    btn1 = tk.Button(buy_frame, text="Show on web", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
-                     command=lambda: webbrowser.open(
-                         "https://www.pathofexile.com/trade/search/Metamorph/" + query)).grid(row=r, column=0)
-    buy_frame.call('wm', 'attributes', '.', '-topmost', '1')
-    buy_frame.mainloop()
+                else:
+                    wr[r] = tk.Label(buy_frame, text="price {} {} - {}".format(amount, currency, nick), fg=config['colors']['textcolor'],
+                                     bg=config['colors']['bgcolor'])
+                    wr[r].grid(row=r)
+                    br[r] = tk.Button(buy_frame, text="Buy", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
+                                      command=lambda whisper=whisper: buyitem(whisper)).grid(row=r, column=1)
+                    wr[r].bind('<Enter>', lambda event, mods=mods: entry_mouse_enter(event, mods))
+                    wr[r].bind('<Leave>', entry_mouse_leave)
+
+
+                r = r + 1
+        btn1 = tk.Button(buy_frame, text="Show on web", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
+                         command=lambda: webbrowser.open(
+                             "https://www.pathofexile.com/trade/search/Metamorph/" + query)).grid(row=r, column=0)
+        buy_frame.call('wm', 'attributes', '.', '-topmost', '1')
+        buy_frame.mainloop()
+    except:
+        MessFrame = Tk()
+        MessFrame.configure(background=config['colors']['bgcolor'])
+        MessFrame.geometry('150x50+200+200')
+        MessFrame.title("Pricecheck")
+        w = tk.Label(MessFrame, text="No result's Found", fg=config['colors']['textcolor'], bg=config['colors']['bgcolor']).grid(row=0, column=0, columnspan=2)
+        MessFrame.call('wm', 'attributes', '.', '-topmost', '1')
+        MessFrame.mainloop()
 
 
 def setclienttxt():
     clientwindow = tk.Tk()
     clientwindow.filename = filedialog.askopenfilename(initialdir="/", title="Select file",
                                                        filetypes=(("Text", "*.txt"), ("all files", "*.*")))
-    config['FILES']['clienttxt'] = clientwindow.filename
     config = configparser.ConfigParser()
-    filetosave = '{}\config.ini'.format(os.getcwd())
+    config['FILES']['clienttxt'] = clientwindow.filename
+
+    if sys.platform == "linux":
+        filetosave = '{}/config.ini'.format(os.getcwd())
+    else:
+        filetosave = '{}\config.ini'.format(os.getcwd())
+
     with open(filetosave, 'w') as configfile:
 
         config.write(configfile)
@@ -149,7 +216,10 @@ def setsound():
     soundwindow.filename = filedialog.askopenfilename(initialdir="/", title="Select file", filetypes=(
         ("Wave", "*.wav"), ("Mp3", "*.mp3"), ("all files", "*.*")))
     config['FILES']['soundfile'] = soundwindow.filename
-    filetosave = '{}\config.ini'.format(os.getcwd())
+    if sys.platform == "linux":
+        filetosave = '{}/config.ini'.format(os.getcwd())
+    else:
+        filetosave = '{}\config.ini'.format(os.getcwd())
     with open(filetosave, 'w') as configfile:
         config.write(configfile)
     soundwindow.destroy()
@@ -159,7 +229,10 @@ def setsound():
 
 def setty(tytext):
     config['FILES']['tytrade'] = tytext
-    filetosave = '{}\config.ini'.format(os.getcwd())
+    if sys.platform == "linux":
+        filetosave = '{}/config.ini'.format(os.getcwd())
+    else:
+        filetosave = '{}\config.ini'.format(os.getcwd())
     with open(filetosave, 'w') as configfile:
         config.write(configfile)
 
@@ -173,20 +246,29 @@ def stcolor(which, entry):
     (triple, hexstr) = askcolor()
     if which == "fgcolor":
         config['colors']['fgcolor'] = hexstr
-        filetosave = '{}\config.ini'.format(os.getcwd())
+        if sys.platform == "linux":
+            filetosave = '{}/config.ini'.format(os.getcwd())
+        else:
+            filetosave = '{}\config.ini'.format(os.getcwd())
         with open(filetosave, 'w') as configfile:
             config.write(configfile)
 
     elif which == "bgcolor":
         config['colors']['bgcolor'] = hexstr
-        filetosave = '{}\config.ini'.format(os.getcwd())
+        if sys.platform == "linux":
+            filetosave = '{}/config.ini'.format(os.getcwd())
+        else:
+            filetosave = '{}\config.ini'.format(os.getcwd())
         with open(filetosave, 'w') as configfile:
             config.write(configfile)
 
 
     elif which == "textcolor":
         config['colors']['textcolor'] = hexstr
-        filetosave = '{}\config.ini'.format(os.getcwd())
+        if sys.platform == "linux":
+            filetosave = '{}/config.ini'.format(os.getcwd())
+        else:
+            filetosave = '{}\config.ini'.format(os.getcwd())
         with open(filetosave, 'w') as configfile:
             config.write(configfile)
 
@@ -197,25 +279,37 @@ def stcolor(which, entry):
 def resetcount(awakener):
     if awakener == "redeemer":
         config['awakener']['redeemer'] = str(0)
-        filetosave = '{}\config.ini'.format(os.getcwd())
+        if sys.platform == "linux":
+            filetosave = '{}/config.ini'.format(os.getcwd())
+        else:
+            filetosave = '{}\config.ini'.format(os.getcwd())
         with open(filetosave, 'w') as configfile:
             config.write(configfile)
         act1.config(text=config['awakener']['redeemer'])
     if awakener == "crusader":
         config['awakener']['crusader'] = str(0)
-        filetosave = '{}\config.ini'.format(os.getcwd())
+        if sys.platform == "linux":
+            filetosave = '{}/config.ini'.format(os.getcwd())
+        else:
+            filetosave = '{}\config.ini'.format(os.getcwd())
         with open(filetosave, 'w') as configfile:
             config.write(configfile)
         act2.config(text=config['awakener']['crusader'])
     if awakener == "warlord":
         config['awakener']['warlord'] = str(0)
-        filetosave = '{}\config.ini'.format(os.getcwd())
+        if sys.platform == "linux":
+            filetosave = '{}/config.ini'.format(os.getcwd())
+        else:
+            filetosave = '{}\config.ini'.format(os.getcwd())
         with open(filetosave, 'w') as configfile:
             config.write(configfile)
         act3.config(text=config['awakener']['warlord'])
     if awakener == "hunter":
         config['awakener']['hunter'] = str(0)
-        filetosave = '{}\config.ini'.format(os.getcwd())
+        if sys.platform == "linux":
+            filetosave = '{}/config.ini'.format(os.getcwd())
+        else:
+            filetosave = '{}\config.ini'.format(os.getcwd())
         with open(filetosave, 'w') as configfile:
             config.write(configfile)
         act4.config(text=config['awakener']['hunter'])
@@ -227,7 +321,6 @@ def createmainmenu():
     global act3
     global act4
     global e
-
 
     menuwindow = tk.Tk()
     menuwindow.title("Poe Tools")

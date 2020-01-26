@@ -1,0 +1,6 @@
+keyboard
+requests
+pynput
+wx
+psutil
+PySimpleGUIQt
