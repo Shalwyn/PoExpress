@@ -48,6 +48,7 @@ def checkclienttxt():
         clientwindow = Tk()
         clientwindow.filename = filedialog.askopenfilename(initialdir="/", title="Please choose your Client.txt",
                                                            filetypes=(("Text", "*.txt"), ("all files", "*.*")))
+        print(clientwindow.filename)
         config['FILES']['clienttxt'] = clientwindow.filename
         with open('config.ini', 'w') as configfile:
             config.write(configfile)

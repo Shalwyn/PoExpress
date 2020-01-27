@@ -58,7 +58,9 @@ def builduniquestat(itemparse):
     splitmap = itemparse.splitlines()
     mod = {}
     value = {}
-
+    implicits = {}
+    valueimp = {}
+    k = 0
     for x in range(0, itemparse.count('\n')):
         if "Item Level:" in splitmap[x]:
             beginstat = x
@@ -66,7 +68,13 @@ def builduniquestat(itemparse):
                 links = splitmap[x-2].count('-') + 1
             if "Allocates" in splitmap[beginstat+2]:
                 beginstat = beginstat+2
-            if "implicit" in splitmap[beginstat+2]:
+            if "(implicit)" in splitmap[beginstat+2]:
+
+                for y in range(beginstat+2, beginstat+10):
+                    if "(implicit)" in splitmap[y]:
+                        implicits[k] = splitmap[y]
+                        k = k + 1
+
                 beginstat = beginstat+4
                 break
             else:
@@ -108,6 +116,31 @@ def builduniquestat(itemparse):
     parameters["query"]["stats"][0]["filters"] = []
 
     z = 0
+
+    for x in range (0, len(implicits)):
+        valueimp[x] = implicits[x].replace('+', '')
+        valueimp[x] = re.sub(r"[^0-9-.]", "", valueimp[x])
+
+        implicits[x] = implicits[x].replace('+', '')
+        implicits[x] = re.sub("[^a-zA-Z %]+", "#", implicits[x])
+        implicits[x] = implicits[x][:-10]
+
+        if "#% reduced Mana Reserved" in implicits[x]:
+            implicits[x] = "#% increased Mana Reserved"
+            valueimp[x] = int(valueimp[x]) * -1
+            valueimp[x] = str(valueimp[x])
+
+        if implicits[x] in modlist.mods:
+
+            for y in range(0, len(modlist.mods[implicits[x]])):
+                if "implicit" in modlist.mods[implicits[z]][y]:
+                    implicitstat = modlist.mods[implicits[z]][y]
+            min = valueimp[x]
+
+            parameters["query"]["stats"][0]["filters"].append({"id": implicitstat, "value": {"min": min}})
+
+    jprint(parameters)
+
     for y in range(beginstat, endstep):
 
 
@@ -150,7 +183,7 @@ def builduniquestat(itemparse):
         value[z] = splitmap[y].replace('+', '')
         value[z] = re.sub(r"[^0-9-]", "", value[z])
 
-        if "Adds" in splitmap[y] and "Physical Damage" in splitmap[y] or "Chaos Damage" in splitmap[y] or "Cold Damage" in splitmap[y] or "Fire Damage" in splitmap[y] or "Lightning Damage" in splitmap[y] and "to" in splitmap[y]:
+        if "Adds" in splitmap[y] and ("Physical Damage" in splitmap[y] or "Chaos Damage" in splitmap[y] or "Cold Damage" in splitmap[y] or "Fire Damage" in splitmap[y] or "Lightning Damage" in splitmap[y]) and "to" in splitmap[y]:
             mintomod = splitmap[y].split()
             value[z] = (int(mintomod[1]) + int(mintomod[3])) / 2
 
@@ -180,17 +213,25 @@ def buildrareitem(itemparse):
     mod = {}
     endstep = itemparse.count('\n')
     splitmap = itemparse.splitlines()
-
-    value = {}
-
+    implicits = {}
+    valueimp = {}
+    k = 0
     for x in range(0, itemparse.count('\n')):
+
         if "Item Level:" in splitmap[x]:
             beginstat = x
             if splitmap[x-2].count('-') != 0:
                 links = splitmap[x-2].count('-') + 1
             if "Allocates" in splitmap[beginstat+2]:
                 beginstat = beginstat+2
-            if "implicit" in splitmap[beginstat+2]:
+
+            if "(implicit)" in splitmap[beginstat+2]:
+
+                for y in range(beginstat+2, beginstat+5):
+                    if "(implicit)" in splitmap[y]:
+                        implicits[k] = splitmap[y]
+                        k = k + 1
+
                 beginstat = beginstat+4
                 break
             else:
@@ -235,10 +276,31 @@ def buildrareitem(itemparse):
     parameters["query"]["stats"][0]["filters"] = []
 
     z = 0
+
+    for x in range (0, len(implicits)):
+        valueimp[x] = implicits[x].replace('+', '')
+        valueimp[x] = re.sub(r"[^0-9-.]", "", valueimp[x])
+
+        implicits[x] = implicits[x].replace('+', '')
+        implicits[x] = re.sub("[^a-zA-Z %]+", "#", implicits[x])
+        implicits[x] = implicits[x][:-10]
+
+        if "#% reduced Mana Reserved" in implicits[x]:
+            implicits[x] = "#% increased Mana Reserved"
+            valueimp[x] = int(valueimp[x]) * -1
+            valueimp[x] = str(valueimp[x])
+
+        if implicits[x] in modlist.mods:
+
+            for y in range(0, len(modlist.mods[implicits[x]])):
+                if "implicit" in modlist.mods[implicits[z]][y]:
+                    implicitstat = modlist.mods[implicits[z]][y]
+            min = valueimp[x]
+
+            parameters["query"]["stats"][0]["filters"].append({"id": implicitstat, "value": {"min": min}})
+
+
     for y in range(beginstat, endstep):
-
-
-
         mod[z] = splitmap[y].replace('+', '')
         mod[z] = re.sub("[^a-zA-Z %]+", "#", mod[z])
         #mod[z] = re.sub(r"\d+", "#", mod[z])
@@ -303,6 +365,8 @@ def buildrareitem(itemparse):
             parameters["query"]["stats"][0]["filters"].append({"id": explicitstat, "value": {"min": min}})
         #addfiltermods["filters"].update(addmod)
         z = z + 1
+
+
 
     #jprint(parameters)
     #addfilter["stats"].update(addfiltermods)
@@ -490,9 +554,10 @@ def buildpricewindow():
             if sys.platform == "linux":
                 self.wm_attributes('-topmost', '1')
                 #self.call('wm', 'attributes', '.', '-topmost', '1')
-            else:
-                self.wm_attributes('-topmost', '1')
                 #self.overrideredirect(True)
+            else:
+                #self.wm_attributes('-topmost', '1')
+                self.overrideredirect(True)
 
             self.message_label = tk.Label(self, compound='left', text=self.message, bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'])
             self.message_label.pack()
@@ -505,7 +570,6 @@ def buildpricewindow():
 
         def clear_tip(self):
             """Entferne den Tool-Tip"""
-
             self.destroy()
 
     def entry_mouse_enter(event, value):
@@ -519,9 +583,10 @@ def buildpricewindow():
 
     def entry_mouse_leave(event):
         """Die Maus bewegt sich aus dem Entry-Widget"""
-
+        pricecheckframe.my_tool_tip.update()
         #~~ Entferne den Tool-Tip
-        pricecheckframe.my_tool_tip.destroy()
+        if pricecheckframe.my_tool_tip.winfo_exists() is 1:
+            pricecheckframe.my_tool_tip.destroy()
 
     #jprint(parameters)
     response = requests.post("https://www.pathofexile.com/api/trade/search/Metamorph", json=parameters)

@@ -2,3 +2,5 @@ test.py
 functions/config.py
 **/.idea
 **/__pycache__
+config.ini
+output/poetools
