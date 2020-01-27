@@ -4,3 +4,4 @@ functions/config.py
 **/__pycache__
 config.ini
 output/poetools
+.vscode/launch.json

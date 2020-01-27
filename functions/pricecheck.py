@@ -612,6 +612,7 @@ def buildpricewindow():
             wr = {}
 
             pricecheckframe = Tk()
+            
             pricecheckframe.configure(background=config['colors']['bgcolor'])
             pricecheckframe.geometry('300x200+200+200')
             pricecheckframe.title(name)
