@@ -653,7 +653,7 @@ def buildpricewindow():
             MessFrame = Tk()
             MessFrame.configure(background=config['colors']['bgcolor'])
             MessFrame.geometry('400x300+200+200')
-            w = tk.Label(MessFrame, text="No result's Found", fg=config['colors']['textcolor'], bg=config['colors']['bgcolor']).grid(row=0, column=0, columnspan=2)
+            tk.Label(MessFrame, text="No result's Found", fg=config['colors']['textcolor'], bg=config['colors']['bgcolor']).grid(row=0, column=0, columnspan=2)
             x = 0
             for k in mod:
                 e[x] = tk.Entry(MessFrame, width=40, fg=config['colors']['fgcolor'], bg=config['colors']['bgcolor'])
@@ -663,9 +663,9 @@ def buildpricewindow():
                 ev[x].insert(0, value[x])
                 ev[x].grid(row=x+1, column=1)
                 x = x + 1
-            btn1 = tk.Button(MessFrame, text="Search Again", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
+            tk.Button(MessFrame, text="Search Again", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
                                   command=lambda: searchnewrare(e, ev, MessFrame)).grid(row=x+1, column=0)
-            btn2 = tk.Button(MessFrame, text="Search on Web", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
+            tk.Button(MessFrame, text="Search on Web", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
                                   command=lambda: searchweb(query)).grid(row=x+2, column=0)
             MessFrame.call('wm', 'attributes', '.', '-topmost', '1')
             MessFrame.mainloop()
