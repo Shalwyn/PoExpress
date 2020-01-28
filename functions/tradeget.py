@@ -37,7 +37,6 @@ def hideout(seller):
     if sys.platform == "linux":
         subprocess.Popen("wmctrl -a Path of Exile", stdout=subprocess.PIPE, shell=True)
     else:
-        regex = "Path of Exile"
         notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
         notepadWindow.activate()
 
@@ -64,7 +63,6 @@ def sendinvite(nicktoinvite):
     if sys.platform == "linux":
         subprocess.Popen("wmctrl -a Path of Exile", stdout=subprocess.PIPE, shell=True)
     else:
-        regex = "Path of Exile"
         notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
         notepadWindow.activate()
 
@@ -91,7 +89,6 @@ def finditem(itemtosearch):
     if sys.platform == "linux":
         subprocess.Popen("wmctrl -a Path of Exile", stdout=subprocess.PIPE, shell=True)
     else:
-        regex = "Path of Exile"
         notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
         notepadWindow.activate()
 
@@ -111,7 +108,6 @@ def sendtrade(nicktotrade):
     if sys.platform == "linux":
         subprocess.Popen("wmctrl -a Path of Exile", stdout=subprocess.PIPE, shell=True)
     else:
-        regex = "Path of Exile"
         notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
         notepadWindow.activate()
 
@@ -138,7 +134,6 @@ def sendty(nicktotrade):
     if sys.platform == "linux":
         subprocess.Popen("wmctrl -a Path of Exile", stdout=subprocess.PIPE, shell=True)
     else:
-        regex = "Path of Exile"
         notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
         notepadWindow.activate()
 
@@ -158,7 +153,6 @@ def sendbusy(nicktotrade):
     if sys.platform == "linux":
         subprocess.Popen("wmctrl -a Path of Exile", stdout=subprocess.PIPE, shell=True)
     else:
-        regex = "Path of Exile"
         notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
         notepadWindow.activate()
 
@@ -173,12 +167,30 @@ def sendbusy(nicktotrade):
     time.sleep(0.1)
     keyboard.press(Key.enter)
     keyboard.release(Key.enter)
+    
+def sendinter(buyer, item):
+    if sys.platform == "linux":
+        subprocess.Popen("wmctrl -a Path of Exile", stdout=subprocess.PIPE, shell=True)
+    else:
+        notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
+        notepadWindow.activate()
+
+    time.sleep(1)
+
+    keyboard = Controller()
+    keyboard.press(Key.enter)
+    keyboard.release(Key.enter)
+    keyboard.type(u'\u0040')
+    time.sleep(0.1)
+    keyboard.type("{} Hey, still interested in my: {} ?".format(buyer, item))
+    time.sleep(0.1)
+    keyboard.press(Key.enter)
+    keyboard.release(Key.enter)
 
 def sendsold(nicktotrade, item):
     if sys.platform == "linux":
         subprocess.Popen("wmctrl -a Path of Exile", stdout=subprocess.PIPE, shell=True)
     else:
-        regex = "Path of Exile"
         notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
         notepadWindow.activate()
 
@@ -199,7 +211,6 @@ def kickparty(nicktokick, window, tasktabs):
     if sys.platform == "linux":
         subprocess.Popen("wmctrl -a Path of Exile", stdout=subprocess.PIPE, shell=True)
     else:
-        regex = "Path of Exile"
         notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
         notepadWindow.activate()
 
@@ -255,9 +266,8 @@ def addtabtrade(window, tasktabs, line):
     windowprice = " ".join(price)
     windowstash = " ".join(stash)
 
-
     Tab = ttk.Frame(tasktabs)
-
+        
     tasktabs.add(Tab, text=buyer)
     tasktabs.grid(row=0, column=0, sticky="W")
     T = tk.Text(Tab, height=10, width=60, fg=config['colors']['textcolor'], bg=config['colors']['bgcolor'])
@@ -266,35 +276,47 @@ def addtabtrade(window, tasktabs, line):
     T.insert(tk.END, "Price: {} \n".format(windowprice))
     T.insert(tk.END, "{} \n".format(windowstash))
     T.insert(tk.END, "{} \n".format(now))
-    #btn0 = tk.Button(Tab, text="Sold", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
-    #                 command=lambda: sendsold(buyer, item)).grid(row=2, column=0)
-    btn1 = tk.Button(Tab, text="Invite", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
-                     command=lambda: sendinvite(buyer)).grid(row=2, column=1)
-    btn6 = tk.Button(Tab, text="Busy", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'], command=lambda: sendbusy(buyer)).grid(
+    tk.Button(Tab, text="Invite", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
+                     command=lambda: sendinvite(buyer)).grid(row=2, column=0)
+    tk.Button(Tab, text="Sold", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
+                     command=lambda: sendsold(buyer, item)).grid(row=2, column=1)
+    tk.Button(Tab, text="Busy", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'], command=lambda: sendbusy(buyer)).grid(
         row=2, column=2)
-    btn5 = tk.Button(Tab, text="Find Item", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
-                     command=lambda: finditem(windowtext)).grid(row=2, column=3)
-    btn2 = tk.Button(Tab, text="Trade", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'], command=lambda: sendtrade(buyer)).grid(
-        row=2, column=4)
-    btn4 = tk.Button(Tab, text="Ty", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'], command=lambda: sendty(buyer)).grid(row=2,
-                                                                                                                  column=5)
-    btn3 = tk.Button(Tab, text="Kick", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
-                     command=lambda: kickparty(buyer, window, tasktabs)).grid(row=2, column=6)
+    tk.Button(Tab, text="Interested?", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'], command=lambda: sendinter(buyer, windowtext)).grid(
+        row=2, column=3)
+    tk.Button(Tab, text="Find Item", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
+                     command=lambda: finditem(windowtext)).grid(row=3, column=0)
+    tk.Button(Tab, text="Trade", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'], command=lambda: sendtrade(buyer)).grid(
+        row=3, column=1)
+    tk.Button(Tab, text="Ty", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'], command=lambda: sendty(buyer)).grid(row=3,
+                                                                                                                  column=2)
+    tk.Button(Tab, text="Kick", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
+                     command=lambda: kickparty(buyer, window, tasktabs)).grid(row=3, column=3)
     
 
 
 
 
 def tradewindow(line=""):
+   
+
+    
     global window
     global tasktabs
     window = tk.Tk()
+        
     window.title("Trade")
-    window.configure(background=config['colors']['bgcolor'])
+    
+    style = ttk.Style(window)
+    
+    style.theme_use("clam")
+    style.configure("TNotebook", background=config['colors']['bgcolor'])
+    style.configure("TNotebook.Tab", background=config['colors']['bgcolor'], foreground=config['colors']['fgcolor'])
+    style.configure("TFrame", background=config['colors']['bgcolor'])
+    
     tasktabs = ttk.Notebook(window)
 
     window.call('wm', 'attributes', '.', '-topmost', '1')
-#    window.after(0, readclient())
     addtabtrade(window, tasktabs, line)
     window.mainloop()
 
@@ -310,13 +332,11 @@ def outgoinwindow():
         buyer = buyer[:-1]
 
     if 'Hi,' in splitmsg  and "@To" in splitmsg:
-        print("here")
         seller = splitmsg[splitmsg.index("@To")+1]
         del splitmsg[0:splitmsg.index("Hi,")]
 
         item = splitmsg[splitmsg.index("your")+1:splitmsg.index("listed")]
         price = splitmsg[splitmsg.index("for")+1:splitmsg.index("for")+3]
-        stash = splitmsg[splitmsg.index(league)+1:splitmsg.index(league)+11]
 
 
     dateTimeObj = datetime.now()
@@ -326,15 +346,14 @@ def outgoinwindow():
     window.configure(background=config['colors']['fgcolor'])
     windowtext = " ".join(item)
     windowprice = " ".join(price)
-    windowstash = " ".join(stash)
     T = tk.Text(window, height=10, width=60, fg=config['colors']['textcolor'], bg=config['colors']['bgcolor'])
     T.grid(row=0, column=0, columnspan=3,  sticky="nsew")
     T.insert(tk.END, "Nick: {} \n".format(seller))
     T.insert(tk.END, "Item: {} \n".format(windowtext))
     T.insert(tk.END, "Price: {} \n".format(windowprice))
     T.insert(tk.END, "{} \n".format(now))
-    btn1 = tk.Button(window, text = "Visit Hideout", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'], command=lambda: hideout(seller)).grid(row=1, column=0)
-    btn2 = tk.Button(window, text = "Ty", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'], command=lambda: sendty(seller)).grid(row=1, column=1)
+    tk.Button(window, text = "Visit Hideout", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'], command=lambda: hideout(seller)).grid(row=1, column=0)
+    tk.Button(window, text = "Ty", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'], command=lambda: sendty(seller)).grid(row=1, column=1)
 
     window.call('wm', 'attributes', '.', '-topmost', '1')
 #    window.after(0, readclient())

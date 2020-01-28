@@ -4,7 +4,7 @@ import requests
 import re
 import tkinter as tk
 from tkinter import filedialog
-from tkinter import *
+
 import functions.modlist as modlist
 import functions.config as config
 import webbrowser
@@ -611,7 +611,7 @@ def buildpricewindow():
             r = 0
             wr = {}
 
-            pricecheckframe = Tk()
+            pricecheckframe = tk.Tk()
             
             pricecheckframe.configure(background=config['colors']['bgcolor'])
             pricecheckframe.geometry('300x200+200+200')
@@ -625,7 +625,6 @@ def buildpricewindow():
                     if d['item']['identified'] is True:
                         mods = d['item']['explicitMods']
                     if 'corrupted' in d['item']:
-                        corrupt = d['item']['corrupted']
                         wr[r] = tk.Label(pricecheckframe, text="price {} {} Corrupted".format(amount, currency),
                                          fg=config['colors']['textcolor'], bg=config['colors']['bgcolor'])
                         wr[r].grid(row=r)
@@ -650,7 +649,7 @@ def buildpricewindow():
             response = requests.post("https://www.pathofexile.com/api/trade/search/Metamorph", json=parameters)
             query = response.json()["id"]
 
-            MessFrame = Tk()
+            MessFrame = tk.Tk()
             MessFrame.configure(background=config['colors']['bgcolor'])
             MessFrame.geometry('400x300+200+200')
             tk.Label(MessFrame, text="No result's Found", fg=config['colors']['textcolor'], bg=config['colors']['bgcolor']).grid(row=0, column=0, columnspan=2)
@@ -670,10 +669,10 @@ def buildpricewindow():
             MessFrame.call('wm', 'attributes', '.', '-topmost', '1')
             MessFrame.mainloop()
     except:
-        MessFrame = Tk()
+        MessFrame = tk.Tk()
         MessFrame.configure(background=config['colors']['bgcolor'])
         MessFrame.geometry('150x50+200+200')
         MessFrame.title("Pricecheck")
-        w = tk.Label(MessFrame, text="No result's Found", fg=config['colors']['textcolor'], bg=config['colors']['bgcolor']).grid(row=0, column=0, columnspan=2)
+        tk.Label(MessFrame, text="No result's Found", fg=config['colors']['textcolor'], bg=config['colors']['bgcolor']).grid(row=0, column=0, columnspan=2)
         MessFrame.call('wm', 'attributes', '.', '-topmost', '1')
         MessFrame.mainloop()

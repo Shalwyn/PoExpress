@@ -1,14 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-#
 
-from functions.pricecheck import *
-from functions.keyfunctions import *
+import functions.pricecheck as pricecheck
+from functions.keyfunctions import watch_keyboard
 import sys
+import os
 import functions.config as config
 import functions.tradeget as tradeget
 import threading
 import time
-
+import tkinter as tk
 from tkinter import filedialog
 import psutil
 import PySimpleGUIQt as sg
@@ -25,7 +26,7 @@ keyth.start()
 
 prev = ""
 prevst = ""
-root = Tk()
+root = tk.Tk()
 root.update()
 root.withdraw()
 DEBUG = False
@@ -45,7 +46,7 @@ def checkclienttxt():
     try:
         open(config['FILES']['clienttxt'] , "r")
     except IOError:
-        clientwindow = Tk()
+        clientwindow = tk.Tk()
         clientwindow.filename = filedialog.askopenfilename(initialdir="/", title="Please choose your Client.txt",
                                                            filetypes=(("Text", "*.txt"), ("all files", "*.*")))
         print(clientwindow.filename)
@@ -62,6 +63,7 @@ checkclienttxt()
 originalTime = os.path.getmtime(config['FILES']['clienttxt'])
 
 def traymake():
+    
     tray = sg.SystemTray(menu=menu_def, filename=r'icon.png')
     while True:
         menu_item = tray.Read()
@@ -90,15 +92,15 @@ while True:
 
     try:
         data = root.clipboard_get()
-    except (TclError, UnicodeDecodeError):  # ignore non-text clipboard contents
+    except (tk.TclError, UnicodeDecodeError):  # ignore non-text clipboard contents
         continue
 
     splitdata = data.splitlines()
     if "Rarity: Unique" in data and config['FILES'].getint('statsearch') == 0:
         if data != prev:
             prev = data
-            buildunique(data)
-            t80 = threading.Thread(target=buildpricewindow)
+            pricecheck.buildunique(data)
+            t80 = threading.Thread(target=pricecheck.buildpricewindow)
             t80.start()
 
     elif "Rarity: Unique" in data and config['FILES'].getint('statsearch') == 1:
@@ -106,8 +108,8 @@ while True:
         if data != prevst:
             prevst = data
             prev = data
-            builduniquestat(data)
-            t81 = threading.Thread(target=buildpricewindow)
+            pricecheck.builduniquestat(data)
+            t81 = threading.Thread(target=pricecheck.buildpricewindow)
             t81.start()
             config = configparser.ConfigParser()
             if sys.platform == "linux":
@@ -122,37 +124,37 @@ while True:
     elif "Map Tier:" in data and ("Rarity: Rare" in data or "Rarity: Normal" in data or "Rarity: Magic" in data):
         if data != prev:
             prev = data
-            buildmap(data)
-            t82 = threading.Thread(target=buildpricewindow)
+            pricecheck.buildmap(data)
+            t82 = threading.Thread(target=pricecheck.buildpricewindow)
             t82.start()
 
     elif "Rarity: Currency" in data or "Rarity: Divination Card" in data:
         if data != prev:
             prev = data
-            buildcurrency(data)
-            t83 = threading.Thread(target=buildpricewindow)
+            pricecheck.buildcurrency(data)
+            t83 = threading.Thread(target=pricecheck.buildpricewindow)
             t83.start()
 
     elif "Rarity: Gem" in data:
 
         if data != prev:
             prev = data
-            buildgem(data)
-            t84 = threading.Thread(target=buildpricewindow)
+            pricecheck.buildgem(data)
+            t84 = threading.Thread(target=pricecheck.buildpricewindow)
             t84.start()
 
     elif "Rarity: Rare" in data and splitdata[3] == "--------":
         if data != prev:
             prev = data
-            buildrareitem(data)
-            t85 = threading.Thread(target=buildpricewindow)
+            pricecheck.buildrareitem(data)
+            t85 = threading.Thread(target=pricecheck.buildpricewindow)
             t85.start()
 
     elif "Rarity: Normal" in data:
         if data != prev:
             prev = data
-            buildnormal(data)
-            t84 = threading.Thread(target=buildpricewindow)
+            pricecheck.buildnormal(data)
+            t84 = threading.Thread(target=pricecheck.buildpricewindow)
             t84.start()
 
     time.sleep(0.5)
