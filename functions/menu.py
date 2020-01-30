@@ -382,18 +382,11 @@ def searchotherset():
 
 def setclienttxt():
     clientwindow = tk.Tk()
-    clientwindow.filename = filedialog.askopenfilename(initialdir="/", title="Select file",
-                                                       filetypes=(("Text", "*.txt"), ("all files", "*.*")))
-    config = configparser.ConfigParser()
+    clientwindow.filename = filedialog.askopenfilename(initialdir="/", title="Please choose your Client.txt",
+                                                        filetypes=(("Text", "*.txt"), ("all files", "*.*")))
+    
     config['FILES']['clienttxt'] = clientwindow.filename
-
-    if sys.platform == "linux":
-        filetosave = '{}/config.ini'.format(os.getcwd())
-    else:
-        filetosave = '{}\config.ini'.format(os.getcwd())
-
-    with open(filetosave, 'w') as configfile:
-
+    with open('config.ini', 'w') as configfile:
         config.write(configfile)
     clientwindow.destroy()
 
@@ -550,6 +543,9 @@ def createmainmenu():
     menuwindow.call('wm', 'attributes', '.', '-topmost', '1')
     menuwindow.mainloop()
 
+def createmainmenuthread():
+    smtray = threading.Thread(target=createmainmenu)
+    smtray.start()
 
 def creatoptions():
     optionwindow = tk.Tk()

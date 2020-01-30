@@ -8,6 +8,7 @@ elif version_info.major == 3:
     import tkinter as tk
 from playsound import playsound
 import re
+import threading
 from pynput.keyboard import Key, Controller
 import functions.config as config
 from datetime import datetime
@@ -294,14 +295,17 @@ def addtabtrade(window, tasktabs, line):
                      command=lambda: kickparty(buyer, window, tasktabs)).grid(row=3, column=3)
     
 
+def tradewindowthreat(lastline):
+     ttw = threading.Thread(target=tradewindow, kwargs={'line': lastline})
+     ttw.start()
 
 
 
 def tradewindow(line=""):
    
-
-    
     global window
+    
+    
     global tasktabs
     window = tk.Tk()
         
@@ -315,11 +319,15 @@ def tradewindow(line=""):
     style.configure("TFrame", background=config['colors']['bgcolor'])
     
     tasktabs = ttk.Notebook(window)
-
+  
+    def on_close():
+        tasktabs.forget(tasktabs.select())
+  
     window.call('wm', 'attributes', '.', '-topmost', '1')
     addtabtrade(window, tasktabs, line)
+    window.protocol("WM_DELETE_WINDOW", on_close)
     window.mainloop()
-
+  
 
 def outgoinwindow():
     clientding = open(config['FILES']['clienttxt'], 'r', encoding='UTF8')

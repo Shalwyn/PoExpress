@@ -18,8 +18,7 @@ import functions.menu as menu
 
 menu_def = ['BLANK', 'E&xit']
 
-smtray = threading.Thread(target=menu.createmainmenu)
-smtray.start()
+menu.createmainmenuthread()
 
 keyth = threading.Thread(target=watch_keyboard)
 keyth.start()
@@ -120,7 +119,6 @@ while True:
             with open('config.ini', 'w') as configfile:
                 config.write(configfile)
 
-
     elif "Map Tier:" in data and ("Rarity: Rare" in data or "Rarity: Normal" in data or "Rarity: Magic" in data):
         if data != prev:
             prev = data
@@ -173,10 +171,11 @@ while True:
 
             if tradeget.league in last_line and "@From" in last_line:
                 try:
-                    tradeget.addtabtrade(tradeget.window, tradeget.tasktabs, last_line)
+                    if tradeget.window.winfo_exists() is not None:
+                        tradeget.addtabtrade(tradeget.window, tradeget.tasktabs, last_line)
                 except:
-                    t18 = threading.Thread(target=tradeget.tradewindow, kwargs={'line': last_line})
-                    t18.start()
+                    tradeget.tradewindowthreat(last_line)
+                   
 
 
             if tradeget.league in last_line and "@To" in last_line:

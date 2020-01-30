@@ -1,20 +1,8 @@
-import tkinter as tk
+import pygtk
 
-APP_TITLE = "My first checkbox"
-
-def series_callback(status):
-    print("Checkbox Status:", status.get())
-
-def main():
-    app_win = tk.Tk()
-    app_win.title(APP_TITLE)
-
-    series_checked = tk.BooleanVar(app_win, True)
-    series_checked.trace("w", lambda *_: series_callback(series_checked))
-
-    tk.Checkbutton(app_win, text="Serie", variable=series_checked).pack()
-    app_win.mainloop()
-
-
-if __name__ == '__main__':
-    main()
+def on_file(self, widget):
+   dlg = gtk.FileChooserDialog("Open..", None, gtk.FILE_CHOOSER_ACTION_OPEN,
+      (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+   response = dlg.run()
+   self.text.set_text(dlg.get_filename())
+   dlg.destroy()
