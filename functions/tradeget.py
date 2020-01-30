@@ -10,7 +10,7 @@ from playsound import playsound
 import re
 import threading
 from pynput.keyboard import Key, Controller
-import functions.config as config
+
 from datetime import datetime
 import sys
 from tkinter import ttk
@@ -233,7 +233,7 @@ def kickparty(nicktokick, window, tasktabs):
     time.sleep(0.1)
     keyboard.press(Key.enter)
     keyboard.release(Key.enter)
-
+    window.withdraw()
     tasktabs.forget(tasktabs.select())
 
 
@@ -266,6 +266,9 @@ def addtabtrade(window, tasktabs, line):
     windowtext = " ".join(item)
     windowprice = " ".join(price)
     windowstash = " ".join(stash)
+
+    window.update()
+    window.deiconify()
 
     Tab = ttk.Frame(tasktabs)
         
@@ -322,6 +325,7 @@ def tradewindow(line=""):
   
     def on_close():
         tasktabs.forget(tasktabs.select())
+        window.withdraw()
   
     window.call('wm', 'attributes', '.', '-topmost', '1')
     addtabtrade(window, tasktabs, line)
