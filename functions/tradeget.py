@@ -164,7 +164,7 @@ def sendbusy(nicktotrade):
     keyboard.release(Key.enter)
     keyboard.type(u'\u0040')
     time.sleep(0.1)
-    keyboard.type("{} {}".format(nicktotrade, "Sorry busy right now, will invite you when i'm done"))
+    keyboard.type("{} {}".format(nicktotrade, "Sorry busy right now will invite you when im done"))
     time.sleep(0.1)
     keyboard.press(Key.enter)
     keyboard.release(Key.enter)
@@ -234,6 +234,8 @@ def kickparty(nicktokick, window, tasktabs):
     keyboard.press(Key.enter)
     keyboard.release(Key.enter)
     tasktabs.forget(tasktabs.select())
+    if tasktabs.select() is "":
+        window.withdraw()  
 
 def forgettabs(tasktabs):
     tasktabs.forget(tasktabs.select())

@@ -126,12 +126,20 @@ while True:
             t82 = threading.Thread(target=pricecheck.buildpricewindow)
             t82.start()
 
-    elif "Rarity: Currency" in data or "Rarity: Divination Card" in data:
+    elif "Rarity: Currency" in data:
         if data != prev:
             prev = data
             pricecheck.buildcurrency(data)
             t83 = threading.Thread(target=pricecheck.buildpricewindowcurrency)
             t83.start()
+            
+    elif "Rarity: Divination Card" in data:
+        if data != prev:
+            prev = data
+            pricecheck.buildrest(data)
+            t83 = threading.Thread(target=pricecheck.buildpricewindow)
+            t83.start()
+            
     elif "Rarity: Gem" in data:
 
         if data != prev:

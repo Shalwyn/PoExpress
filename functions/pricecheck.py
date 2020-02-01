@@ -11,6 +11,7 @@ import webbrowser
 import configparser
 import os
 import sys
+import functions.currency as currency
 
 config = configparser.ConfigParser()
 if sys.platform == "linux":
@@ -29,6 +30,26 @@ def checkifcurrepted(itemparse):
         return "true"
     else:
         return "false"
+
+def buildrest(itemparse):
+    global parameters
+    global name
+    parameters = {
+        "query": {
+            "status": {
+                "option": "online"
+            },
+            "type": itemparse.splitlines()[1],
+            "stats": [{
+                "type": "and",
+                "filters": []
+            }]
+        },
+        "sort": {
+            "price": "asc"
+        }
+    }
+    name = parameters['query']['type']
 
 def buildunique(itemparse):
     global parameters
@@ -375,10 +396,8 @@ def buildrareitem(itemparse):
 def buildcurrency(itemparse):
     global parameters
     global name
-    if itemparse.splitlines()[1] == "Exalted Orb":
-        want = "exa"
-    else:
-        want = itemparse.splitlines()[1] 
+    want = currency.CURRENCY[itemparse.splitlines()[1] ]
+    
         
     parameters = {
         "exchange": {
