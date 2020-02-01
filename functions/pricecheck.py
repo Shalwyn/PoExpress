@@ -375,23 +375,22 @@ def buildrareitem(itemparse):
 def buildcurrency(itemparse):
     global parameters
     global name
+    if itemparse.splitlines()[1] == "Exalted Orb":
+        want = "exa"
+    else:
+        want = itemparse.splitlines()[1] 
+        
     parameters = {
-        "query": {
+        "exchange": {
             "status": {
                 "option": "online"
             },
-            "type": itemparse.splitlines()[1],
-            "stats": [{
-                "type": "and",
-                "filters": []
-            }]
-        },
-        "sort": {
-            "price": "asc"
+            "have": ["chaos"],
+            "want": [want]
         }
     }
-    name = parameters['query']['type']
-
+    name = parameters['exchange']['want']
+    
 def buildnormal(itemparse):
     global parameters
     global name
@@ -614,7 +613,7 @@ def buildpricewindow():
             pricecheckframe = tk.Tk()
             
             pricecheckframe.configure(background=config['colors']['bgcolor'])
-            pricecheckframe.geometry('300x200+200+200')
+            #pricecheckframe.geometry('300x200+200+200')
             pricecheckframe.title(name)
 
             for d in result:
@@ -676,3 +675,53 @@ def buildpricewindow():
         tk.Label(MessFrame, text="No result's Found", fg=config['colors']['textcolor'], bg=config['colors']['bgcolor']).grid(row=0, column=0, columnspan=2)
         MessFrame.call('wm', 'attributes', '.', '-topmost', '1')
         MessFrame.mainloop()
+        
+        
+def buildpricewindowcurrency():
+    #jprint(parameters)
+    response = requests.post("https://www.pathofexile.com/api/trade/exchange/Metamorph", json=parameters)
+    #jprint(response.json())
+   
+    
+    query = response.json()["id"]
+    result = response.json()["result"][:10]
+    #result = re.sub('[!@#$]', '', result)
+    result = json.dumps(result)
+    result = result.replace('[', '')
+    result = result.replace(']', '')
+    result = result.replace('"', '')
+    result = result.replace(' ', '')
+
+    #print("https://www.pathofexile.com/api/trade/fetch/{}?query={}&exchange".format(result, query))
+
+    response = requests.get("https://www.pathofexile.com/api/trade/fetch/{}?query={}&exchange".format(result, query))
+    result = response.json()["result"]
+    #print("https://www.pathofexile.com/api/trade/fetch/{}?query={}&exchange".format(result, query))
+    #jprint(result)
+
+    r = 0
+    wr = {}
+
+    pricecheckframe = tk.Tk()
+    
+    pricecheckframe.configure(background=config['colors']['bgcolor'])
+    #pricecheckframe.geometry('300x200+200+200')
+    pricecheckframe.title(name)
+
+    for d in result:
+        if d['listing']['price'] != None:
+            amount = d['listing']['price']['exchange']['amount']
+            currency = d['listing']['price']['exchange']['currency']
+            whichamount = d['listing']['price']['item']['amount']
+            whichcurrency = d['listing']['price']['item']['currency']
+            wr[r] = tk.Label(pricecheckframe, text="{} {} -> {} {}".format(whichamount, whichcurrency, amount, currency),
+                                fg=config['colors']['textcolor'], bg=config['colors']['bgcolor'])
+            wr[r].grid(row=r)
+            r = r + 1
+
+    B = tk.Button(pricecheckframe, text ="Close", command=lambda: pricecheckframe.destroy())
+    B.grid(row=r)
+    pricecheckframe.call('wm', 'attributes', '.', '-topmost', '1')
+    pricecheckframe.mainloop()
+     
+    

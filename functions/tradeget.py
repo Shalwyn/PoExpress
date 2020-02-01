@@ -233,10 +233,13 @@ def kickparty(nicktokick, window, tasktabs):
     time.sleep(0.1)
     keyboard.press(Key.enter)
     keyboard.release(Key.enter)
-    window.withdraw()
     tasktabs.forget(tasktabs.select())
 
-
+def forgettabs(tasktabs):
+    tasktabs.forget(tasktabs.select())
+    if tasktabs.select() is "":
+        window.withdraw()  
+    
 
 
 def addtabtrade(window, tasktabs, line):
@@ -296,6 +299,8 @@ def addtabtrade(window, tasktabs, line):
                                                                                                                   column=2)
     tk.Button(Tab, text="Kick", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
                      command=lambda: kickparty(buyer, window, tasktabs)).grid(row=3, column=3)
+    tk.Button(Tab, text="Close", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
+                     command=lambda: forgettabs(tasktabs)).grid(row=4, column=2)
     
 
 def tradewindowthreat(lastline):
@@ -325,6 +330,7 @@ def tradewindow(line=""):
   
     def on_close():
         tasktabs.forget(tasktabs.select())
+     
         window.withdraw()
   
     window.call('wm', 'attributes', '.', '-topmost', '1')

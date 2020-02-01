@@ -130,9 +130,8 @@ while True:
         if data != prev:
             prev = data
             pricecheck.buildcurrency(data)
-            t83 = threading.Thread(target=pricecheck.buildpricewindow)
+            t83 = threading.Thread(target=pricecheck.buildpricewindowcurrency)
             t83.start()
-
     elif "Rarity: Gem" in data:
 
         if data != prev:
@@ -154,8 +153,6 @@ while True:
             pricecheck.buildnormal(data)
             t84 = threading.Thread(target=pricecheck.buildpricewindow)
             t84.start()
-
-    time.sleep(0.5)
 
     if os.path.getmtime(config['FILES']['clienttxt']) > originalTime:
         config = configparser.ConfigParser()
@@ -212,7 +209,6 @@ while True:
                 menu.act4.config(text=config['awakener'].getint('hunter'))
                 # menu.act1.configure(text=config.redeemer)
             lastlinesold = lastlinesold + 1
-            time.sleep(1)
             lastseenline = last_line
         ding.close()
         originalTime = os.path.getmtime(config['FILES']['clienttxt'])
