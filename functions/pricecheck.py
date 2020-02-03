@@ -255,8 +255,13 @@ def buildrareitem(itemparse):
 
                 beginstat = beginstat+4
                 break
+            
             else:
                 beginstat = x+2
+                
+    if splitmap[beginstat+1] == "--------":
+        beginstat = beginstat + 2
+                
 
 
     for x in range(beginstat, itemparse.count('\n')):
@@ -264,7 +269,8 @@ def buildrareitem(itemparse):
             endstep = x
             break
 
-    if links == 0:
+
+    if links < 4:
         links = None
 
     parameters = {
@@ -304,12 +310,17 @@ def buildrareitem(itemparse):
 
         implicits[x] = implicits[x].replace('+', '')
         implicits[x] = re.sub("[^a-zA-Z %]+", "#", implicits[x])
-        implicits[x] = implicits[x][:-10]
+        implicits[x] = implicits[x][:-11]
 
         if "#% reduced Mana Reserved" in implicits[x]:
             implicits[x] = "#% increased Mana Reserved"
             valueimp[x] = int(valueimp[x]) * -1
             valueimp[x] = str(valueimp[x])
+
+        if "Staff" in itemparse:
+            if "Chance to Block Attack Damage while wielding a Staff" in implicits[x]:
+                implicits[x] = "#% Chance to Block Attack Damage while wielding a Staff (Staves)"
+            
 
         if implicits[x] in modlist.mods:
 
@@ -376,15 +387,24 @@ def buildrareitem(itemparse):
                 mintomod = splitmap[y].split()
                 value[z] = (int(mintomod[2]) + int(mintomod[4])) / 2
 
+        if "crafted" in mod[z]:
+            mod[z] = mod[z][:-10]
+            if mod[z] in modlist.mods:
 
-        if mod[z] in modlist.mods:
+                for x in range(0, len(modlist.mods[mod[z]])):
+                    if "crafted" in modlist.mods[mod[z]][x]:
+                        explicitstat = modlist.mods[mod[z]][x]
+                min = value[z]
+                parameters["query"]["stats"][0]["filters"].append({"id": explicitstat, "value": {"min": min}})
+        else:
+            if mod[z] in modlist.mods:
 
-            for x in range(0, len(modlist.mods[mod[z]])):
-                if "explicit" in modlist.mods[mod[z]][x]:
-                    explicitstat = modlist.mods[mod[z]][x]
-            min = value[z]
-            parameters["query"]["stats"][0]["filters"].append({"id": explicitstat, "value": {"min": min}})
-        #addfiltermods["filters"].update(addmod)
+                for x in range(0, len(modlist.mods[mod[z]])):
+                    if "explicit" in modlist.mods[mod[z]][x]:
+                        explicitstat = modlist.mods[mod[z]][x]
+                min = value[z]
+                parameters["query"]["stats"][0]["filters"].append({"id": explicitstat, "value": {"min": min}})
+            #addfiltermods["filters"].update(addmod)
         z = z + 1
 
 
@@ -413,8 +433,20 @@ def buildcurrency(itemparse):
 def buildnormal(itemparse):
     global parameters
     global name
+    itemlvl = itemparse.splitlines()[4]
+    itemlvl = re.sub(r"[^0-9-.]", "", itemlvl)
+
     parameters = {
         "query": {
+            "filters": {
+                "misc_filters": {
+                    "filters": {
+                        "ilvl": {
+                            "min": itemlvl,
+                        }
+                    }
+                }
+            },
             "status": {
                 "option": "online"
             },
@@ -640,7 +672,7 @@ def buildpricewindow():
                     amount = d['listing']['price']['amount']
                     currency = d['listing']['price']['currency']
                     mods = "None"
-                    if d['item']['identified'] is True:
+                    if d['item']['identified'] is True and 'explicitMods' in d:
                         mods = d['item']['explicitMods']
                     if 'corrupted' in d['item']:
                         wr[r] = tk.Label(pricecheckframe, text="price {} {} Corrupted".format(amount, currency),

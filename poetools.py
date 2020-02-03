@@ -91,7 +91,8 @@ while True:
 
     try:
         data = root.clipboard_get()
-    except (tk.TclError, UnicodeDecodeError):  # ignore non-text clipboard contents
+    except (tk.TclError, UnicodeDecodeError) as e:  # ignore non-text clipboard contents
+        print(e)
         continue
 
     splitdata = data.splitlines()
@@ -163,6 +164,7 @@ while True:
             t84.start()
 
     if os.path.getmtime(config['FILES']['clienttxt']) > originalTime:
+        
         config = configparser.ConfigParser()
         if sys.platform == "linux":
             config.read('{}/config.ini'.format(os.getcwd()))
