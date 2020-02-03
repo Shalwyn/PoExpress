@@ -254,18 +254,28 @@ def addtabtrade(window, tasktabs, line):
     last_line = line
 
     splitmsg = last_line.split()
-    if 'wtb' in splitmsg and "@From" in splitmsg:
+    if 'wtb' in splitmsg and "@From" in splitmsg and "stash" in splitmsg:
         buyer = splitmsg[splitmsg.index("wtb") - 1]
         del splitmsg[0:splitmsg.index("wtb")]
+        item = splitmsg[splitmsg.index("wtb") + 1:splitmsg.index("listed")]
+        price = splitmsg[splitmsg.index("for") + 1:splitmsg.index("for") + 3]
+        stash = splitmsg[splitmsg.index(league) + 1:splitmsg.index(league) + 11]
         buyer = buyer[:-1]
         playsound("{}".format(sound))
-    if 'Hi,' in splitmsg and "@From" in splitmsg:
+    if 'Hi,' in splitmsg and "@From" in splitmsg and "stash" in splitmsg:
         buyer = splitmsg[splitmsg.index("Hi,") - 1]
         del splitmsg[0:splitmsg.index("Hi,")]
         buyer = buyer[:-1]
         item = splitmsg[splitmsg.index("your") + 1:splitmsg.index("listed")]
         price = splitmsg[splitmsg.index("for") + 1:splitmsg.index("for") + 3]
         stash = splitmsg[splitmsg.index(league) + 1:splitmsg.index(league) + 11]
+        playsound("{}".format(sound))
+    if "for" in splitmsg and "my" in splitmsg:
+        buyer = splitmsg[1]
+        buyer = buyer[:-1]
+        item = splitmsg[splitmsg.index("your") + 1:splitmsg.index("for")]
+        price = splitmsg[splitmsg.index("my") + + 1:splitmsg.index("in")]
+        stash = ""
         playsound("{}".format(sound))
 
     windowtext = " ".join(item)
@@ -346,17 +356,26 @@ def outgoinwindow():
     last_line = clientding.readlines()[-1]
     clientding.close()
     splitmsg = last_line.split()
-    if 'wtb' in splitmsg and "@To" in splitmsg:
-        buyer = splitmsg[splitmsg.index("wtb")-1]
+    if 'wtb' in splitmsg and "@To" in splitmsg and "stash" in splitmsg:
+        seller = splitmsg[splitmsg.index("wtb")-1]
         del splitmsg[0:splitmsg.index("wtb")]
-        buyer = buyer[:-1]
+        item = splitmsg[splitmsg.index("wtb")+1:splitmsg.index("listed")]
+        price = splitmsg[splitmsg.index("for")+1:splitmsg.index("for")+3]
 
-    if 'Hi,' in splitmsg  and "@To" in splitmsg:
+
+    if 'Hi,' in splitmsg  and "@To" in splitmsg and "stash" in splitmsg:
         seller = splitmsg[splitmsg.index("@To")+1]
         del splitmsg[0:splitmsg.index("Hi,")]
 
         item = splitmsg[splitmsg.index("your")+1:splitmsg.index("listed")]
         price = splitmsg[splitmsg.index("for")+1:splitmsg.index("for")+3]
+    if "for" in splitmsg and "my" in splitmsg:
+        seller = splitmsg[1]
+        seller = seller[:-1]
+        item = splitmsg[splitmsg.index("your") + 1:splitmsg.index("for")]
+        price = splitmsg[splitmsg.index("my") + + 1:splitmsg.index("in")]
+ 
+ 
 
 
     dateTimeObj = datetime.now()

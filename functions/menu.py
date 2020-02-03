@@ -6,21 +6,19 @@ import json
 import requests
 import threading
 from pynput.keyboard import Key, Controller
-
-import webbrowser
 import sys
-import os
-
 if sys.platform == "linux":
     import gi
-
     gi.require_version("Gtk", "3.0")
     gi.require_version("Wnck", "3.0")
     from gi.repository import Gtk, Gdk, Wnck
 else:
     import pygetwindow as gw
+import webbrowser
+import os
+import subprocess
+import time
 from tkinter.colorchooser import askcolor
-
 import configparser
 
 config = configparser.ConfigParser()
@@ -37,26 +35,23 @@ def jprint(obj):
 
 def buyitem(whisper):
     if sys.platform == "linux":
-        titlePattern = re.compile("Path of Exile")
-
-        Gtk.init([])  # necessary if not using a Gtk.main() loop
-        screen = Wnck.Screen.get_default()
-        screen.force_update()  # recommended per Wnck documentation
-
-        window_list = screen.get_windows()
-        for w in window_list:
-            if titlePattern.match(w.get_name()):
-                w.activate(0)
+        subprocess.Popen("wmctrl -a Path of Exile", stdout=subprocess.PIPE, shell=True)
     else:
-        notepadwindow = gw.getWindowsWithTitle('Path of Exile')[0]
-        notepadwindow.activate()
+        notepadWindow = gw.getWindowsWithTitle('Path of Exile')[0]
+        notepadWindow.activate()
+
+    time.sleep(1)
 
     keyboard = Controller()
     keyboard.press(Key.enter)
     keyboard.release(Key.enter)
-    keyboard.type(whisper)
+    keyboard.type(u'\u0040')
+    time.sleep(0.1)
+    keyboard.type(whisper[1:])
+    time.sleep(0.1)
     keyboard.press(Key.enter)
     keyboard.release(Key.enter)
+
 
 
 
