@@ -16,7 +16,7 @@ import PySimpleGUIQt as sg
 import configparser
 import functions.menu as menu
 
-menu_def = ['BLANK', 'E&xit']
+menu_def = ['File', ['Options', '&Buy', '---', 'E&xit']]
 
 menu.createmainmenuthread()
 
@@ -68,7 +68,7 @@ def traymake():
         menu_item = tray.Read()
         if menu_item == 'Exit':
             if sys.platform == "linux":
-                PROCNAME = "python"
+                PROCNAME = "python3"
                 for proc in psutil.process_iter():
                     # check whether the process name matches
                     if proc.name() == PROCNAME:
@@ -80,6 +80,10 @@ def traymake():
                     # check whether the process name matches
                     if proc.name() == PROCNAME:
                         proc.kill()
+        if menu_item == "Options":
+            menu.startopt()
+        if menu_item == "Buy":
+            menu.startbuy()
 
 trayth = threading.Thread(target=traymake)
 trayth.start()

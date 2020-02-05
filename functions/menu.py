@@ -56,49 +56,30 @@ def buyitem(whisper):
 
 
 def searchwindowset():
-    class MyToolTip(tk.Toplevel):
+    class CreateToolTip(object):
 
-        TIP_X_OFFSET = 8
-        TIP_Y_OFFSET = 8
-        AUTO_CLEAR_TIME = 1000 # Millisek. (1 sek.)
-
-        def __init__(self, xpos, ypos, message="my tooltip", auto_clear=False):
-
-            self.xpos = xpos
-            self.ypos = ypos
-            self.message = message
-            self.auto_clear = auto_clear
-
-            tk.Toplevel.__init__(self)
-            #self.overrideredirect(True)
-            self.wm_attributes('-topmost', '1')
-
-            self.message_label = tk.Label(self, compound='left', text=self.message, bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'])
-            self.message_label.pack()
-
-            self.geometry("+%d+%d" % (self.xpos+self.TIP_X_OFFSET,
-                self.ypos+self.TIP_X_OFFSET))
-
-            if self.auto_clear:
-                self.after(self.AUTO_CLEAR_TIME, self.clear_tip)
-
-        def clear_tip(self):
-            """Entferne den Tool-Tip"""
-
-            self.destroy()
-
-    def entry_mouse_enter(event, value):
-        """Die Maus bewegt sich ins Entry-Widget"""
-        printvalue = '\n'.join(value)
-        buy_frame.my_tool_tip = MyToolTip(event.x_root, event.y_root,
-            printvalue)
-
-    def entry_mouse_leave(event):
-        """Die Maus bewegt sich aus dem Entry-Widget"""
-
-        #~~ Entferne den Tool-Tip
-        buy_frame.my_tool_tip.destroy()
-
+        def __init__(self, widget, text='widget info'):
+            self.widget = widget
+            self.text = text
+            self.widget.bind("<Enter>", self.enter)
+            self.widget.bind("<Leave>", self.close)
+        def enter(self, event=None):
+            x = y = 0
+            x, y, cx, cy = self.widget.bbox("insert")
+            x += self.widget.winfo_rootx() + 25
+            y += self.widget.winfo_rooty() + 20
+            # creates a toplevel window
+            self.tw = tk.Toplevel(self.widget)
+            # Leaves only the label and removes the app window
+            self.tw.wm_overrideredirect(True)
+            self.tw.wm_geometry("+%d+%d" % (x, y))
+            label = tk.Label(self.tw, text=self.text, justify='left',
+                        bg=config['colors']['bgcolor'], fg=config['colors']['textcolor'], relief='solid', borderwidth=1,
+                        font=("times", "12", "normal"))
+            label.pack(ipadx=1)
+        def close(self, event=None):
+            if self.tw:
+                self.tw.destroy()
     global parameters
     global name
     item = e.get()
@@ -147,7 +128,7 @@ def searchwindowset():
                 currency = d['listing']['price']['currency']
                 nick = d['listing']['account']['lastCharacterName']
                 whisper = d['listing']['whisper']
-                mods = d['item']['explicitMods']
+                mods = "\n".join(d['item']['explicitMods'])
                 
                 if 'corrupted' in d['item']:
                     wr[r] = tk.Label(buy_frame, text="price {} {} Corrupt - {}".format(amount, currency, nick),
@@ -155,8 +136,7 @@ def searchwindowset():
                     wr[r].grid(row=r)
                     tk.Button(buy_frame, text="Buy", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
                                       command=lambda whisper=whisper: buyitem(whisper)).grid(row=r, column=1)
-                    wr[r].bind('<Enter>', lambda event, mods=mods: entry_mouse_enter(event, mods))
-                    wr[r].bind('<Leave>', entry_mouse_leave)
+                    CreateToolTip(wr[r], mods)
 
 
                 else:
@@ -165,8 +145,7 @@ def searchwindowset():
                     wr[r].grid(row=r)
                     tk.Button(buy_frame, text="Buy", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
                                       command=lambda whisper=whisper: buyitem(whisper)).grid(row=r, column=1)
-                    wr[r].bind('<Enter>', lambda event, mods=mods: entry_mouse_enter(event, mods))
-                    wr[r].bind('<Leave>', entry_mouse_leave)
+                    CreateToolTip(wr[r], mods)
 
 
                 r = r + 1

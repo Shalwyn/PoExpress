@@ -5,3 +5,4 @@ functions/config.py
 config.ini
 output/poetools
 .vscode/launch.json
+priceexamples.py
