@@ -32,7 +32,7 @@ if sys.platform == "linux":
 else:
     config.read('{}\config.ini'.format(os.getcwd()))
 
-league = "Metamorph"
+league = "Standard"
 
 def hideout(seller):
     if sys.platform == "linux":

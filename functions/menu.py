@@ -101,7 +101,7 @@ def searchwindowset():
     }
 
     name = parameters['query']['name']
-    response = requests.post("https://www.pathofexile.com/api/trade/search/Metamorph", json=parameters)
+    response = requests.post("https://www.pathofexile.com/api/trade/search/Standard", json=parameters)
 
     try:
 
@@ -151,7 +151,7 @@ def searchwindowset():
                 r = r + 1
         tk.Button(buy_frame, text="Show on web", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
                          command=lambda: webbrowser.open(
-                             "https://www.pathofexile.com/trade/search/Metamorph/" + query)).grid(row=r, column=0)
+                             "https://www.pathofexile.com/trade/search/Standard/" + query)).grid(row=r, column=0)
         buy_frame.call('wm', 'attributes', '.', '-topmost', '1')
         buy_frame.mainloop()
     except:
@@ -211,7 +211,7 @@ def searchgemwindow():
     }
 
     name = parameters['query']['type']
-    response = requests.post("https://www.pathofexile.com/api/trade/search/Metamorph", json=parameters)
+    response = requests.post("https://www.pathofexile.com/api/trade/search/Standard", json=parameters)
 
     try:
 
@@ -260,7 +260,7 @@ def searchgemwindow():
                 r = r + 1
         tk.Button(buy_frame, text="Show on web", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
                          command=lambda: webbrowser.open(
-                             "https://www.pathofexile.com/trade/search/Metamorph/" + query)).grid(row=r, column=0)
+                             "https://www.pathofexile.com/trade/search/Standard/" + query)).grid(row=r, column=0)
         buy_frame.call('wm', 'attributes', '.', '-topmost', '1')
         buy_frame.mainloop()
     except:
@@ -294,7 +294,7 @@ def searchotherset():
     }
 
     name = parameters['query']['term']
-    response = requests.post("https://www.pathofexile.com/api/trade/search/Metamorph", json=parameters)
+    response = requests.post("https://www.pathofexile.com/api/trade/search/Standard", json=parameters)
 
     try:
 
@@ -342,7 +342,7 @@ def searchotherset():
                 r = r + 1
         tk.Button(buy_frame, text="Show on web", bg=config['colors']['bgcolor'], fg=config['colors']['fgcolor'],
                          command=lambda: webbrowser.open(
-                             "https://www.pathofexile.com/trade/search/Metamorph/" + query)).grid(row=r, column=0)
+                             "https://www.pathofexile.com/trade/search/Standard/" + query)).grid(row=r, column=0)
         buy_frame.call('wm', 'attributes', '.', '-topmost', '1')
         buy_frame.mainloop()
     except:

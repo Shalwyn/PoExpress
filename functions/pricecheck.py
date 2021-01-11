@@ -562,7 +562,7 @@ def buildgem(itemparse):
     name = "{} Lvl: {} Qual: {} Corrupted {}".format(parameters['query']['type'], itemparse.splitlines()[4].split()[1], qual, checkifcurrepted(itemparse))
 
 def searchweb(query):
-    webbrowser.open("https://www.pathofexile.com/trade/search/Metamorph/"+ query)
+    webbrowser.open("https://www.pathofexile.com/trade/search/Standard/"+ query)
 
 def searchnewrare(mod, value, MessFrame):
     x = 0
@@ -613,7 +613,7 @@ def buildpricewindow():
                 self.tw.destroy()
 
     #jprint(parameters)
-    response = requests.post("https://www.pathofexile.com/api/trade/search/Metamorph", json=parameters)
+    response = requests.post("https://www.pathofexile.com/api/trade/search/Standard", json=parameters)
     #jprint(response.json())
     try:
         if response.json()["total"] > 0:
@@ -669,7 +669,7 @@ def buildpricewindow():
             e = {}
             ev = {}
 
-            response = requests.post("https://www.pathofexile.com/api/trade/search/Metamorph", json=parameters)
+            response = requests.post("https://www.pathofexile.com/api/trade/search/Standard", json=parameters)
             query = response.json()["id"]
 
             MessFrame = tk.Tk()
@@ -703,7 +703,7 @@ def buildpricewindow():
         
 def buildpricewindowcurrency():
     #jprint(parameters)
-    response = requests.post("https://www.pathofexile.com/api/trade/exchange/Metamorph", json=parameters)
+    response = requests.post("https://www.pathofexile.com/api/trade/exchange/Standard", json=parameters)
     #jprint(response.json())
    
     
