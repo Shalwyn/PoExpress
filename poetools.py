@@ -22,7 +22,7 @@ menu.createmainmenuthread()
 
 keyth = threading.Thread(target=watch_keyboard)
 keyth.start()
-
+testversion = ""
 prev = ""
 prevst = ""
 root = tk.Tk()
